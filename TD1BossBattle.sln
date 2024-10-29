@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.9.34902.65
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "TD1BossBattle", "TD1BossBattle.vcxproj", "{6533AA29-96A7-4D29-BF57-CD7AA5B7BFF9}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|x64 = Debug|x64
+		Release|x64 = Release|x64
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{6533AA29-96A7-4D29-BF57-CD7AA5B7BFF9}.Debug|x64.ActiveCfg = Debug|x64
+		{6533AA29-96A7-4D29-BF57-CD7AA5B7BFF9}.Debug|x64.Build.0 = Debug|x64
+		{6533AA29-96A7-4D29-BF57-CD7AA5B7BFF9}.Release|x64.ActiveCfg = Release|x64
+		{6533AA29-96A7-4D29-BF57-CD7AA5B7BFF9}.Release|x64.Build.0 = Release|x64
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {0A733AE3-9435-4CF6-A0B1-124CF795B02E}
+	EndGlobalSection
+EndGlobal
