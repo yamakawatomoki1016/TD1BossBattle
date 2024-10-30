@@ -98,6 +98,9 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
     int bossSizeX = 200;
     int bossSizeY = 200;
 
+    /*int grh = Novice::LoadTexture("./Resources/knightKouho01.png");
+    int grh1 = Novice::LoadTexture("./Resources/darkPhenix01.png");*/
+
     // ウィンドウの×ボタンが押されるまでループ
     while (Novice::ProcessMessage() == 0) {
         // フレームの開始
@@ -172,8 +175,10 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
         //自機
         Novice::DrawBox(posX, posY, sizeX, sizeY, 0.0f, GREEN, kFillModeSolid);
+        //Novice::DrawSprite(posX, posY, grh, 1, 1, 0.0f, WHITE);
         //ボス
         Novice::DrawBox(bossPosX, bossPosY, bossSizeX, bossSizeY, 0.0f, WHITE, kFillModeSolid);
+        //Novice::DrawSprite(bossPosX, bossPosY, grh1, 1, 1, 0.0f, WHITE);
         DrawBeams(startLineX, startLineY, goalLineX, goalLineY, BLACK);
 
         // 右クリックで斬撃を描画
