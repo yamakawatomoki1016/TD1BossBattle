@@ -82,7 +82,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
     int startLineY[7] = { 250, 650, 250, 650, 50, 50, 50 };
     int goalLineX[7] = { 50, 50, 1490, 1490, 200, 750, 1350 };
     int goalLineY[7] = { 250, 650, 250, 650, 50, 50, 50 };
-
+    
     const int initialStartLineX[7] = { 50, 50, 1490, 1490, 200, 750, 1350 };
     const int initialStartLineY[7] = { 250, 650, 250, 650, 50, 50, 50 };
     const int initialGoalLineX[7] = { 50, 50, 1490, 1490, 200, 750, 1350 };
@@ -93,6 +93,10 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
     const int sizeX = 100;
     const int sizeY = 120;
     const int speed = 10;
+    int bossPosX = 600;
+    int bossPosY = 100;
+    int bossSizeX = 200;
+    int bossSizeY = 200;
 
     // ウィンドウの×ボタンが押されるまでループ
     while (Novice::ProcessMessage() == 0) {
@@ -167,9 +171,9 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
         ///
 
         //自機
-        Novice::DrawBox(posX, posY, sizeX, sizeY, 0.0f, WHITE, kFillModeSolid);
+        Novice::DrawBox(posX, posY, sizeX, sizeY, 0.0f, GREEN, kFillModeSolid);
         //ボス
-        Novice::DrawBox(600, 100, 200, 200, 0.0f, WHITE, kFillModeSolid);
+        Novice::DrawBox(bossPosX, bossPosY, bossSizeX, bossSizeY, 0.0f, WHITE, kFillModeSolid);
         DrawBeams(startLineX, startLineY, goalLineX, goalLineY, BLACK);
 
         // 右クリックで斬撃を描画
