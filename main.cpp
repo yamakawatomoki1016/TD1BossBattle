@@ -241,6 +241,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
                 playerHP = 1000;
                 bossHP = 20;
             }
+            
             if(playerHP <= 0){
                 scene = GAME_OVER;
             }
@@ -375,6 +376,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
             if (Novice::IsTriggerMouse(0)) {
                 DrawSlash(posX + sizeX / 2, posY + sizeY / 2, mouseX, mouseY, BLACK, 60.0f, bossPosX, bossPosY, bossSizeX, bossSizeY);
             }
+
             Novice::ScreenPrintf(20,20,"%d",bossHP);
             Novice::ScreenPrintf(20, 40, "%d", playerHP);
             break;
