@@ -156,13 +156,14 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
     float beamSpeed[7] = { 40.0f };  // スタート時の速度
 
     //画像の読み込み
-    int playerImage[6] = {
+    int playerImage[7] = {
         Novice::LoadTexture("./Resources/move1.png"),
         Novice::LoadTexture("./Resources/move2.png"),
         Novice::LoadTexture("./Resources/move3.png"),
         Novice::LoadTexture("./Resources/move4.png"),
         Novice::LoadTexture("./Resources/move5.png"),
         Novice::LoadTexture("./Resources/move6.png"),
+        Novice::LoadTexture("./Resources/move0.png"),
     };
 
     int bossImage = Novice::LoadTexture("./Resources/darkPhenix01.png");
@@ -198,25 +199,6 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
             if (keys[DIK_S]) posY += speed;
             if (keys[DIK_A]) posX -= speed;
             if (keys[DIK_D]) posX += speed;
-
-            //プレイヤーの画像描画
-            if (keys[DIK_A]) {  
-                playerImageFrameCount++;
-                if (playerImageFrameCount >= 60) {
-                    playerImageFrameCount = 0;
-                }
-                Novice::DrawSprite(posX, posY, playerImage[playerImageFrameCount / 12], 1.0f, 1.0f, 0.0f, WHITE);
-            } 
-            if (keys[DIK_D]&& !keys[DIK_A]) {
-                playerImageFrameCount++;
-                if (playerImageFrameCount >= 60) {
-                    playerImageFrameCount = 0;
-                }
-                Novice::DrawSprite(posX+sizeX, posY, playerImage[playerImageFrameCount / 12], -1.0f, 1.0f, 0.0f, WHITE);
-            }
-            if (!keys[DIK_A] && !keys[DIK_D]) {
-                Novice::DrawSprite(posX, posY, playerImage[0], 1.0f, 1.0f, 0.0f, WHITE);
-            }
 
             // ビームフラグの管理
             if (keys[DIK_1] && !preKeys[DIK_1]) xBeamFlag = true;
@@ -308,13 +290,36 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
             break;
         case GAME:
             //自機
-           // Novice::DrawBox(posX, posY, sizeX, sizeY, 0.0f, GREEN, kFillModeSolid);
+            // Novice::DrawBox(posX, posY, sizeX, sizeY, 0.0f, GREEN, kFillModeSolid);
+
+            //プレイヤーの画像描画
+            if (keys[DIK_A] && !keys[DIK_D]) {
+                playerImageFrameCount++;
+                if (playerImageFrameCount >= 60) {
+                    playerImageFrameCount = 0;
+                }
+                Novice::DrawSprite(posX, posY, playerImage[playerImageFrameCount / 12], 1.0f, 1.0f, 0.0f, WHITE);
+            }
+            if (keys[DIK_D] && !keys[DIK_A]) {
+                playerImageFrameCount++;
+                if (playerImageFrameCount >= 60) {
+                    playerImageFrameCount = 0;
+                }
+                Novice::DrawSprite(posX + sizeX, posY, playerImage[playerImageFrameCount / 12], -1.0f, 1.0f, 0.0f, WHITE);
+            }
+            if (!keys[DIK_A] && !keys[DIK_D]) {
+                Novice::DrawSprite(posX, posY, playerImage[6], 1.0f, 1.0f, 0.0f, WHITE);
+            }
+            if (keys[DIK_A] && keys[DIK_D]) {
+                Novice::DrawSprite(posX, posY, playerImage[6], 1.0f, 1.0f, 0.0f, WHITE);
+            }
 
             // ゲーム内でのビームと自機の衝突判定
             for (int i = 0; i < 7; ++i) {
                 if (CheckBeamCollisionWithPlayer(posX, posY, sizeX, sizeY, startLineX[i], startLineY[i], goalLineX[i], goalLineY[i])) {
                     playerHP -= 10;  // 自機がビームに当たった場合のダメージ
-                    Novice::DrawBox(posX, posY, sizeX, sizeY, 0.0f, RED, kFillModeSolid); // 赤色で自機を描画してダメージを表示
+                   // Novice::DrawBox(posX, posY, sizeX, sizeY, 0.0f, RED, kFillModeSolid); // 赤色で自機を描画してダメージを表示
+                    Novice::DrawSprite(posX, posY, playerImage[6], 1.0f, 1.0f, 0.0f, RED);
                 }
             }
             
