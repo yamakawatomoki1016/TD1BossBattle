@@ -165,7 +165,7 @@ void ShootBullets(int bossPosX, int bossPosY, int playerPosX, int playerPosY, in
     }
 }
 
-void MoveBullets(int playerPosY,int playerPosX,int playerSizeX,int playerSizeY) {
+void MoveBullets(int playerPosY, int playerPosX, int playerSizeX, int playerSizeY) {
     for (int i = 0; i < numOfBullets; ++i) {
         if (bulletActive[i]) {
             // 弾がアクティブなら移動
@@ -200,11 +200,11 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
     bool xBeamFlag2 = false;
     bool yBeamFlag = false;
 
-    int startLineX[7] = { 50, 50, 1490, 1490, 200, 750, 1350};
+    int startLineX[7] = { 50, 50, 1490, 1490, 200, 750, 1350 };
     int startLineY[7] = { 250, 650, 250, 650, 50, 50, 50 };
     int goalLineX[7] = { 50, 50, 1490, 1490, 200, 750, 1350 };
     int goalLineY[7] = { 250, 650, 250, 650, 50, 50, 50 };
-    
+
     const int initialStartLineX[7] = { 50, 50, 1490, 1490, 200, 750, 1350 };
     const int initialStartLineY[7] = { 250, 650, 250, 650, 50, 50, 50 };
     const int initialGoalLineX[7] = { 50, 50, 1490, 1490, 200, 750, 1350 };
@@ -317,7 +317,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
                 goalLineY[5] += 40;
                 goalLineY[6] += 40;
             }
-            
+
             // 端の位置制限
             if (goalLineX[0] >= 1600) { goalLineX[0] = 1600; startLineX[0] += 50; }
             if (goalLineX[1] >= 1600) { goalLineX[1] = 1600; startLineX[1] += 50; }
@@ -340,9 +340,9 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
             }
             bulletCooldown--;
             if (bossHP > 0) {
-                ShootBullets(bossPosX, bossPosY, posX, posY,bossSizeX); // ボスから弾を発射
+                ShootBullets(bossPosX, bossPosY, posX, posY, bossSizeX); // ボスから弾を発射
             }
-            MoveBullets(posY,posX,sizeX,sizeY); // 弾を移動
+            MoveBullets(posY, posX, sizeX, sizeY); // 弾を移動
 
             // リセット処理
             if (keys[DIK_R] && !preKeys[DIK_R]) {
@@ -369,8 +369,8 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
                 playerHP = 1000;
                 bossHP = 20;
             }
-            
-            if(playerHP <= 0){
+
+            if (playerHP <= 0) {
                 scene = GAME_OVER;
             }
             if (bossHP <= 0) {
@@ -489,11 +489,10 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
             for (int i = 0; i < 7; ++i) {
                 if (CheckBeamCollisionWithPlayer(posX, posY, sizeX, sizeY, startLineX[i], startLineY[i], goalLineX[i], goalLineY[i])) {
                     playerHP -= 10;  // 自機がビームに当たった場合のダメージ
-                   // Novice::DrawBox(posX, posY, sizeX, sizeY, 0.0f, RED, kFillModeSolid); // 赤色で自機を描画してダメージを表示
-                    Novice::DrawSprite(posX, posY, playerImage[6], 1.0f, 1.0f, 0.0f, RED);
+                    Novice::DrawBox(posX, posY, sizeX, sizeY, 0.0f, RED, kFillModeSolid); // 赤色で自機を描画してダメージを表示
                 }
             }
-            
+
             //ボス
             if (bossHP > 0) {
                 //Novice::DrawBox(bossPosX, bossPosY, bossSizeX, bossSizeY, 0.0f, bossColor, kFillModeSolid);
@@ -520,7 +519,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
             // 敵の弾の描画
             for (int i = 0; i < numOfBullets; ++i) {
                 if (bulletActive[i]) {
-                    Novice::DrawEllipse(int(bulletPosX[i]), int(bulletPosY[i]), 20, 20,0.0f,RED,kFillModeSolid); // 弾の描画
+                    Novice::DrawEllipse(int(bulletPosX[i]), int(bulletPosY[i]), 20, 20, 0.0f, RED, kFillModeSolid); // 弾の描画
                 }
             }
             for (int i = 0; i < 7; ++i) {
@@ -604,14 +603,14 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
             }
 
             DrawBeams(startLineX, startLineY, goalLineX, goalLineY, BLACK);
-            
+
             bossColor = WHITE;
-            // 左クリックで斬撃を描画し、当たり判定をチェック
+            // 右クリックで斬撃を描画し、当たり判定をチェック
             if (Novice::IsTriggerMouse(0)) {
                 DrawSlash(posX + sizeX / 2, posY + sizeY / 2, mouseX, mouseY, BLACK, 60.0f, bossPosX, bossPosY, bossSizeX, bossSizeY);
             }
 
-            Novice::ScreenPrintf(20,20,"%d",bossHP);
+            Novice::ScreenPrintf(20, 20, "%d", bossHP);
             Novice::ScreenPrintf(20, 40, "%d", playerHP);
             Novice::ScreenPrintf(20, 60, "%d", bossAttackCoolTime);
             Novice::ScreenPrintf(20, 80, "%d", bossImageChange);
@@ -622,7 +621,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
             break;
         }
 
-        
+
         ///
         /// 描画処理ここまで
         ///
