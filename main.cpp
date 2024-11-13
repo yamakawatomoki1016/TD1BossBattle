@@ -155,6 +155,20 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
     // スピードを設定します（1フレームあたりの加算量）
     float beamSpeed[7] = { 40.0f };  // スタート時の速度
 
+    //画像の読み込み
+    int playerImage[6] = {
+        Novice::LoadTexture("./Resources/move1.png"),
+        Novice::LoadTexture("./Resources/move2.png"),
+        Novice::LoadTexture("./Resources/move3.png"),
+        Novice::LoadTexture("./Resources/move4.png"),
+        Novice::LoadTexture("./Resources/move5.png"),
+        Novice::LoadTexture("./Resources/move6.png"),
+    };
+
+    int bossImage = Novice::LoadTexture("./Resources/darkPhenix01.png");
+
+    int playerImageFrameCount = 0;
+
     // ウィンドウの×ボタンが押されるまでループ
     while (Novice::ProcessMessage() == 0) {
         // フレームの開始
@@ -184,6 +198,25 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
             if (keys[DIK_S]) posY += speed;
             if (keys[DIK_A]) posX -= speed;
             if (keys[DIK_D]) posX += speed;
+
+            //プレイヤーの画像描画
+            if (keys[DIK_A]) {  
+                playerImageFrameCount++;
+                if (playerImageFrameCount >= 60) {
+                    playerImageFrameCount = 0;
+                }
+                Novice::DrawSprite(posX, posY, playerImage[playerImageFrameCount / 12], 1.0f, 1.0f, 0.0f, WHITE);
+            } 
+            if (keys[DIK_D]&& !keys[DIK_A]) {
+                playerImageFrameCount++;
+                if (playerImageFrameCount >= 60) {
+                    playerImageFrameCount = 0;
+                }
+                Novice::DrawSprite(posX+sizeX, posY, playerImage[playerImageFrameCount / 12], -1.0f, 1.0f, 0.0f, WHITE);
+            }
+            if (!keys[DIK_A] && !keys[DIK_D]) {
+                Novice::DrawSprite(posX, posY, playerImage[0], 1.0f, 1.0f, 0.0f, WHITE);
+            }
 
             // ビームフラグの管理
             if (keys[DIK_1] && !preKeys[DIK_1]) xBeamFlag = true;
@@ -275,7 +308,8 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
             break;
         case GAME:
             //自機
-            Novice::DrawBox(posX, posY, sizeX, sizeY, 0.0f, GREEN, kFillModeSolid);
+           // Novice::DrawBox(posX, posY, sizeX, sizeY, 0.0f, GREEN, kFillModeSolid);
+
             // ゲーム内でのビームと自機の衝突判定
             for (int i = 0; i < 7; ++i) {
                 if (CheckBeamCollisionWithPlayer(posX, posY, sizeX, sizeY, startLineX[i], startLineY[i], goalLineX[i], goalLineY[i])) {
@@ -286,7 +320,8 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
             
             //ボス
             if (bossHP > 0) {
-                Novice::DrawBox(bossPosX, bossPosY, bossSizeX, bossSizeY, 0.0f, bossColor, kFillModeSolid);
+                //Novice::DrawBox(bossPosX, bossPosY, bossSizeX, bossSizeY, 0.0f, bossColor, kFillModeSolid);
+                Novice::DrawSprite(bossPosX, bossPosY, bossImage, 1.0f, 1.0f, 0.0f, WHITE);
             }
 
             for (int i = 0; i < 7; ++i) {
@@ -372,7 +407,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
             DrawBeams(startLineX, startLineY, goalLineX, goalLineY, BLACK);
             
             bossColor = WHITE;
-            // 右クリックで斬撃を描画し、当たり判定をチェック
+            // 左クリックで斬撃を描画し、当たり判定をチェック
             if (Novice::IsTriggerMouse(0)) {
                 DrawSlash(posX + sizeX / 2, posY + sizeY / 2, mouseX, mouseY, BLACK, 60.0f, bossPosX, bossPosY, bossSizeX, bossSizeY);
             }
