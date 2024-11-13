@@ -63,9 +63,9 @@ void DrawSlash(int startX, int startY, int targetX, int targetY, unsigned int co
     // 斬撃の角度を計算
     float angle = static_cast<float>(atan2(targetY - startY, targetX - startX));
 
-    // 斬撃の発生位置を自機の中心から100ピクセル離れた位置に計算
-    float slashX = startX + cosf(angle) * 100.0f;
-    float slashY = startY + sinf(angle) * 100.0f;
+    // 斬撃の発生位置を自機の中心から130ピクセル離れた位置に計算
+    float slashX = startX + cosf(angle) * 130.0f;
+    float slashY = startY + sinf(angle) * 130.0f;
 
     // 四角形の左上、右上、左下、右下の座標を計算
     float halfWidth = width / 2.0f;
@@ -106,6 +106,81 @@ bool CheckBeamCollisionWithPlayer(int playerX, int playerY, int playerWidth, int
     return false;  // 衝突しなかった
 }
 
+void CheckEnemyAttackRangeAndExecute(int playerX, int playerY, int enemyX, int enemyY, int enemyRadius, int enemySizeX, int enemySizeY) {
+    // プレイヤーとの距離を計算
+    float distance = (float)sqrt(pow(enemyX - playerX, 2) + pow(enemyY - playerY, 2));
+
+    // プレイヤーが範囲内に入ったら攻撃
+    if (distance <= enemyRadius) {
+        DrawSlash(enemyX, enemyY, playerX, playerY, RED, 200, enemyX, enemyY, enemySizeX, enemySizeY);
+    }
+}
+
+int bossAttackCoolTime = 0;
+int bossAttackTimeFlag = false;
+void ExecuteCloseRangeAttack(int playerPosX, int playerPosY, int playerSizeX, int playerSizeY, int bossPosX, int bossPosY, int bossSizeX, int bossSizeY) {
+    // プレイヤーの中心座標を計算
+    int playerCenterX = playerPosX + playerSizeX / 2;
+    int playerCenterY = playerPosY + playerSizeY / 2;
+
+    // ボスの中心座標を計算
+    int bossCenterX = bossPosX + bossSizeX / 2;
+    int bossCenterY = bossPosY + bossSizeY / 2;
+
+    // プレイヤーとボスの距離が400ピクセル以内かどうかチェック
+    if (std::abs(bossCenterX - playerCenterX) <= 300 && std::abs(bossCenterY - playerCenterY) <= 130) {
+        if (playerCenterX < bossCenterX) {
+            // プレイヤーがボスの左側にいる場合
+            Novice::DrawBox(bossCenterX - bossSizeX / 2 - 120, bossCenterY - bossSizeY / 2, 70, bossSizeY, 0.0f, RED, kFillModeSolid);
+            bossAttackTimeFlag = true;
+        }
+        else {
+            // プレイヤーがボスの右側にいる場合
+            Novice::DrawBox(bossCenterX + bossSizeX / 2 + 120, bossCenterY - bossSizeY / 2, 70, bossSizeY, 0.0f, BLUE, kFillModeSolid);
+            bossAttackTimeFlag = true;
+        }
+    }
+}
+
+const int numOfBullets = 10; // 円の数
+float bulletPosX[numOfBullets];
+float bulletPosY[numOfBullets];
+bool bulletActive[numOfBullets] = { false }; // 弾の発射状態
+float bulletSpeed = 5.0f; // 弾の移動速度
+int bulletCooldown = 0; // 弾の発射クールタイム
+
+void ShootBullets(int bossPosX, int bossPosY, int playerPosX, int playerPosY, int bossSizeX) {
+    // 発射間隔が1秒になるように調整
+    if (bulletCooldown <= 0) {
+        for (int i = 0; i < numOfBullets; ++i) {
+            if (!bulletActive[i]) {
+                float angle = (float)atan2(playerPosY - bossPosY, playerPosX - bossPosX);
+                bulletPosX[i] = bossPosX + bossSizeX / 2 + cos(angle) * 50; // 発射位置
+                bulletPosY[i] = bossPosY + sin(angle) * 50;
+                bulletActive[i] = true;
+                break; // 一度に1発だけ発射
+            }
+        }
+        bulletCooldown = 60; // 1秒のクールタイム
+    }
+}
+
+void MoveBullets(int playerPosY,int playerPosX,int playerSizeX,int playerSizeY) {
+    for (int i = 0; i < numOfBullets; ++i) {
+        if (bulletActive[i]) {
+            // 弾がアクティブなら移動
+            float angle = atan2(playerPosY + playerSizeY / 2 - bulletPosY[i], playerPosX + playerSizeX / 2 - bulletPosX[i]);
+            bulletPosX[i] += cos(angle) * bulletSpeed;
+            bulletPosY[i] += sin(angle) * bulletSpeed;
+
+            // 画面外に出たら非アクティブ化
+            if (bulletPosX[i] < 0 || bulletPosX[i] > 1600 || bulletPosY[i] < 0 || bulletPosY[i] > 900) {
+                bulletActive[i] = false;
+            }
+        }
+    }
+}
+
 // Windowsアプリでのエントリーポイント(main関数)
 int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
@@ -141,8 +216,8 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
     const int sizeY = 120;
     const int speed = 10;
     int playerHP = 1000;
-    int bossPosX = 600;
-    int bossPosY = 100;
+    int bossPosX = 1000;
+    int bossPosY = 500;
     int bossSizeX = 200;
     int bossSizeY = 200;
 
@@ -231,6 +306,23 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
             if (goalLineY[5] >= 940) { goalLineY[5] = 940; startLineY[5] += 50; }
             if (goalLineY[6] >= 940) { goalLineY[6] = 940; startLineY[6] += 50; }
 
+            //ボスの近接攻撃のクールタイム
+            if (bossAttackTimeFlag) {
+                bossAttackCoolTime++;
+            }
+            if (bossAttackCoolTime > 120) {
+                bossAttackTimeFlag = false;
+                bossAttackCoolTime = 0;
+            }
+            if (bossAttackTimeFlag == false) {
+                ExecuteCloseRangeAttack(posX, posY, sizeX, sizeY, bossPosX, bossPosY, bossSizeX, bossSizeY);
+            }
+            bulletCooldown--;
+            if (bossHP > 0) {
+                ShootBullets(bossPosX, bossPosY, posX, posY,bossSizeX); // ボスから弾を発射
+            }
+            MoveBullets(posY,posX,sizeX,sizeY); // 弾を移動
+
             // リセット処理
             if (keys[DIK_R] && !preKeys[DIK_R]) {
                 // ビームフラグをリセット
@@ -245,7 +337,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
                 memcpy(goalLineY, initialGoalLineY, sizeof(initialGoalLineY));
 
                 // スピードを初期化
-                beamSpeed[0] = 40.0f;  // 最初のビームの速度
+                beamSpeed[0] = 40.0f;
                 beamSpeed[1] = 40.0f;
                 beamSpeed[2] = 40.0f;
                 beamSpeed[3] = 40.0f;
@@ -266,11 +358,15 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
             break;
         case GAME_CLEAR:
             if (keys[DIK_P] && preKeys[DIK_P] == 0) {
+                playerHP = 1000;
+                bossHP = 20;
                 scene = TITLE;
             }
             break;
         case GAME_OVER:
             if (keys[DIK_P] && preKeys[DIK_P] == 0) {
+                playerHP = 1000;
+                bossHP = 20;
                 scene = TITLE;
             }
             break;
@@ -328,7 +424,12 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
                 //Novice::DrawBox(bossPosX, bossPosY, bossSizeX, bossSizeY, 0.0f, bossColor, kFillModeSolid);
                 Novice::DrawSprite(bossPosX, bossPosY, bossImage, 1.0f, 1.0f, 0.0f, WHITE);
             }
-
+            // 敵の弾の描画
+            for (int i = 0; i < numOfBullets; ++i) {
+                if (bulletActive[i]) {
+                    Novice::DrawEllipse(int(bulletPosX[i]), int(bulletPosY[i]), 20, 20,0.0f,RED,kFillModeSolid); // 弾の描画
+                }
+            }
             for (int i = 0; i < 7; ++i) {
                 // ボックスの中心位置を設定
                 boxPosX[i] = startLineX[i] - boxSizeX[i] / 2;
@@ -419,6 +520,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
             Novice::ScreenPrintf(20,20,"%d",bossHP);
             Novice::ScreenPrintf(20, 40, "%d", playerHP);
+            Novice::ScreenPrintf(20, 60, "%d", bossAttackCoolTime);
             break;
         case GAME_CLEAR:
             break;
