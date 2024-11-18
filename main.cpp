@@ -241,10 +241,14 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
         Novice::LoadTexture("./Resources/move0.png"),
     };
     int bossImage = Novice::LoadTexture("./Resources/darkPhenix01.png");
+    int catBossImage = Novice::LoadTexture("./Resources/bossCatAttack01.png");
+    int stageBackGround = Novice::LoadTexture("./Resources/haikei0003.png");
 
     int playerImageFrameCount = 0;
     int isTurnLeft = false;
     int isTurnRight = true;
+
+    int bossImageChange = false;
 
     // ウィンドウの×ボタンが押されるまでループ
     while (Novice::ProcessMessage() == 0) {
@@ -386,6 +390,8 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
         case TITLE:
             break;
         case GAME:
+            //背景
+            Novice::DrawSprite(0, 0, stageBackGround, 1.2f, 1.2f, 0.0f, WHITE);
             //自機
             // Novice::DrawBox(posX, posY, sizeX, sizeY, 0.0f, GREEN, kFillModeSolid);
             //プレイヤーの画像描画
@@ -464,7 +470,23 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
             //ボス
             if (bossHP > 0) {
                 //Novice::DrawBox(bossPosX, bossPosY, bossSizeX, bossSizeY, 0.0f, bossColor, kFillModeSolid);
-                Novice::DrawSprite(bossPosX, bossPosY, bossImage, 1.0f, 1.0f, 0.0f, WHITE);
+                //デバック用のボス画像切り替え(後からボス描画以外消去)
+                if (keys[DIK_C] && !preKeys[DIK_C]) {
+                    if (bossImageChange == 0) {
+                        bossImageChange = true;
+                    }  
+                }
+                if (keys[DIK_V] && !preKeys[DIK_V]) {
+                    if (bossImageChange == 1) {
+                        bossImageChange = false;
+                    }
+                }
+                if (bossImageChange == 0) {
+                    Novice::DrawSprite(bossPosX, bossPosY, bossImage, 1.0f, 1.0f, 0.0f, WHITE);
+                }
+                if (bossImageChange == 1) {
+                    Novice::DrawSprite(bossPosX, bossPosY, catBossImage, 1.0f, 1.0f, 0.0f, WHITE);
+                }
             }
             // 敵の弾の描画
             for (int i = 0; i < numOfBullets; ++i) {
@@ -563,6 +585,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
             Novice::ScreenPrintf(20,20,"%d",bossHP);
             Novice::ScreenPrintf(20, 40, "%d", playerHP);
             Novice::ScreenPrintf(20, 60, "%d", bossAttackCoolTime);
+            Novice::ScreenPrintf(20, 80, "%d", bossImageChange);
             break;
         case GAME_CLEAR:
             break;
