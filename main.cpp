@@ -242,11 +242,14 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
     };
     int bossImage = Novice::LoadTexture("./Resources/darkPhenix01.png");
     int catBossImage = Novice::LoadTexture("./Resources/bossCatAttack01.png");
+    int bossGauge = Novice::LoadTexture("./Resources/bossgauge.png");
     int stageBackGround = Novice::LoadTexture("./Resources/haikei0003.png");
+    int playerGauge = Novice::LoadTexture("./Resources/playerGauge.png");
 
     int playerImageFrameCount = 0;
     int isTurnLeft = false;
     int isTurnRight = true;
+    int playerColor = WHITE;
 
     int bossImageChange = false;
 
@@ -400,7 +403,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
                 if (playerImageFrameCount >= 60) {
                     playerImageFrameCount = 0;
                 }
-                Novice::DrawSprite(posX, posY, playerImage[playerImageFrameCount / 12], 1.0f, 1.0f, 0.0f, WHITE);
+                Novice::DrawSprite(posX, posY, playerImage[playerImageFrameCount / 12], 1.0f, 1.0f, 0.0f, playerColor);
                 isTurnLeft = true;
                 isTurnRight = false;
             }
@@ -409,20 +412,20 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
                 if (playerImageFrameCount >= 60) {
                     playerImageFrameCount = 0;
                 }
-                Novice::DrawSprite(posX + sizeX, posY, playerImage[playerImageFrameCount / 12], -1.0f, 1.0f, 0.0f, WHITE);
+                Novice::DrawSprite(posX + sizeX, posY, playerImage[playerImageFrameCount / 12], -1.0f, 1.0f, 0.0f, playerColor);
                 isTurnLeft = false;
                 isTurnRight = true;
             }
             if (!keys[DIK_A] && !keys[DIK_D] && !keys[DIK_W] && !keys[DIK_S]) {
                 if (isTurnLeft == 1) {
-                    Novice::DrawSprite(posX, posY, playerImage[6], 1.0f, 1.0f, 0.0f, WHITE);
+                    Novice::DrawSprite(posX, posY, playerImage[6], 1.0f, 1.0f, 0.0f, playerColor);
                 }       
                 if (isTurnRight == 1) {
-                    Novice::DrawSprite(posX + sizeX, posY, playerImage[6], -1.0f, 1.0f, 0.0f, WHITE);
+                    Novice::DrawSprite(posX + sizeX, posY, playerImage[6], -1.0f, 1.0f, 0.0f, playerColor);
                 }
             }
             if (keys[DIK_A] && keys[DIK_D] && keys[DIK_W] && keys[DIK_S]) {
-                Novice::DrawSprite(posX, posY, playerImage[6], 1.0f, 1.0f, 0.0f, WHITE);
+                Novice::DrawSprite(posX, posY, playerImage[6], 1.0f, 1.0f, 0.0f, playerColor);
             }
             //上下移動の時も歩くようにする
             if (keys[DIK_W]) {
@@ -431,14 +434,14 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
                     if (playerImageFrameCount >= 60) {
                         playerImageFrameCount = 0;
                     }
-                    Novice::DrawSprite(posX, posY, playerImage[playerImageFrameCount / 12], 1.0f, 1.0f, 0.0f, WHITE);
+                    Novice::DrawSprite(posX, posY, playerImage[playerImageFrameCount / 12], 1.0f, 1.0f, 0.0f, playerColor);
                 }
                 if (isTurnRight == 1) {
                     playerImageFrameCount++;
                     if (playerImageFrameCount >= 60) {
                         playerImageFrameCount = 0;
                     }
-                    Novice::DrawSprite(posX + sizeX, posY, playerImage[playerImageFrameCount / 12], -1.0f, 1.0f, 0.0f, WHITE);
+                    Novice::DrawSprite(posX + sizeX, posY, playerImage[playerImageFrameCount / 12], -1.0f, 1.0f, 0.0f, playerColor);
                 }
             }
             if (keys[DIK_S]) {
@@ -447,16 +450,18 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
                     if (playerImageFrameCount >= 60) {
                         playerImageFrameCount = 0;
                     }
-                    Novice::DrawSprite(posX, posY, playerImage[playerImageFrameCount / 12], 1.0f, 1.0f, 0.0f, WHITE);
+                    Novice::DrawSprite(posX, posY, playerImage[playerImageFrameCount / 12], 1.0f, 1.0f, 0.0f, playerColor);
                 }
                 if (isTurnRight == 1) {
                     playerImageFrameCount++;
                     if (playerImageFrameCount >= 60) {
                         playerImageFrameCount = 0;
                     }
-                    Novice::DrawSprite(posX + sizeX, posY, playerImage[playerImageFrameCount / 12], -1.0f, 1.0f, 0.0f, WHITE);
+                    Novice::DrawSprite(posX + sizeX, posY, playerImage[playerImageFrameCount / 12], -1.0f, 1.0f, 0.0f, playerColor);
                 }
             }
+            //プレイヤーのHPゲージ(仮置き)
+            Novice::DrawSprite(50, 500, playerGauge, 1.0f, 1.0f, 0.0f, WHITE);
 
             // ゲーム内でのビームと自機の衝突判定
             for (int i = 0; i < 7; ++i) {
@@ -487,6 +492,8 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
                 if (bossImageChange == 1) {
                     Novice::DrawSprite(bossPosX, bossPosY, catBossImage, 1.0f, 1.0f, 0.0f, WHITE);
                 }
+                //ボスゲージ（仮置き）
+                Novice::DrawSprite(200, 100, bossGauge, 1.0f, 1.0f, 0.0f, WHITE);
             }
             // 敵の弾の描画
             for (int i = 0; i < numOfBullets; ++i) {
