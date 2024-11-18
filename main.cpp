@@ -240,10 +240,11 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
         Novice::LoadTexture("./Resources/move6.png"),
         Novice::LoadTexture("./Resources/move0.png"),
     };
-
     int bossImage = Novice::LoadTexture("./Resources/darkPhenix01.png");
 
     int playerImageFrameCount = 0;
+    int isTurnLeft = false;
+    int isTurnRight = true;
 
     // ウィンドウの×ボタンが押されるまでループ
     while (Novice::ProcessMessage() == 0) {
@@ -387,7 +388,6 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
         case GAME:
             //自機
             // Novice::DrawBox(posX, posY, sizeX, sizeY, 0.0f, GREEN, kFillModeSolid);
-
             //プレイヤーの画像描画
             if (keys[DIK_A] && !keys[DIK_D]) {
                 playerImageFrameCount++;
@@ -395,6 +395,8 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
                     playerImageFrameCount = 0;
                 }
                 Novice::DrawSprite(posX, posY, playerImage[playerImageFrameCount / 12], 1.0f, 1.0f, 0.0f, WHITE);
+                isTurnLeft = true;
+                isTurnRight = false;
             }
             if (keys[DIK_D] && !keys[DIK_A]) {
                 playerImageFrameCount++;
@@ -402,12 +404,52 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
                     playerImageFrameCount = 0;
                 }
                 Novice::DrawSprite(posX + sizeX, posY, playerImage[playerImageFrameCount / 12], -1.0f, 1.0f, 0.0f, WHITE);
+                isTurnLeft = false;
+                isTurnRight = true;
             }
-            if (!keys[DIK_A] && !keys[DIK_D]) {
+            if (!keys[DIK_A] && !keys[DIK_D] && !keys[DIK_W] && !keys[DIK_S]) {
+                if (isTurnLeft == 1) {
+                    Novice::DrawSprite(posX, posY, playerImage[6], 1.0f, 1.0f, 0.0f, WHITE);
+                }       
+                if (isTurnRight == 1) {
+                    Novice::DrawSprite(posX + sizeX, posY, playerImage[6], -1.0f, 1.0f, 0.0f, WHITE);
+                }
+            }
+            if (keys[DIK_A] && keys[DIK_D] && keys[DIK_W] && keys[DIK_S]) {
                 Novice::DrawSprite(posX, posY, playerImage[6], 1.0f, 1.0f, 0.0f, WHITE);
             }
-            if (keys[DIK_A] && keys[DIK_D]) {
-                Novice::DrawSprite(posX, posY, playerImage[6], 1.0f, 1.0f, 0.0f, WHITE);
+            //上下移動の時も歩くようにする
+            if (keys[DIK_W]) {
+                if (isTurnLeft == 1) {
+                    playerImageFrameCount++;
+                    if (playerImageFrameCount >= 60) {
+                        playerImageFrameCount = 0;
+                    }
+                    Novice::DrawSprite(posX, posY, playerImage[playerImageFrameCount / 12], 1.0f, 1.0f, 0.0f, WHITE);
+                }
+                if (isTurnRight == 1) {
+                    playerImageFrameCount++;
+                    if (playerImageFrameCount >= 60) {
+                        playerImageFrameCount = 0;
+                    }
+                    Novice::DrawSprite(posX + sizeX, posY, playerImage[playerImageFrameCount / 12], -1.0f, 1.0f, 0.0f, WHITE);
+                }
+            }
+            if (keys[DIK_S]) {
+                if (isTurnLeft == 1) {
+                    playerImageFrameCount++;
+                    if (playerImageFrameCount >= 60) {
+                        playerImageFrameCount = 0;
+                    }
+                    Novice::DrawSprite(posX, posY, playerImage[playerImageFrameCount / 12], 1.0f, 1.0f, 0.0f, WHITE);
+                }
+                if (isTurnRight == 1) {
+                    playerImageFrameCount++;
+                    if (playerImageFrameCount >= 60) {
+                        playerImageFrameCount = 0;
+                    }
+                    Novice::DrawSprite(posX + sizeX, posY, playerImage[playerImageFrameCount / 12], -1.0f, 1.0f, 0.0f, WHITE);
+                }
             }
 
             // ゲーム内でのビームと自機の衝突判定
