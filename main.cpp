@@ -85,7 +85,7 @@ void LaunchCircles(float startX, float startY) {
 //        prevY = currentY;
 //    }
 //}
-
+//
 //void DrawBeams(int* startLineX, int* startLineY, int* goalLineX, int* goalLineY, unsigned int color) {
 //    for (int i = 0; i < 7; ++i) {
 //        DrawLightningLine(startLineX[i], startLineY[i], goalLineX[i], goalLineY[i], color);
@@ -253,7 +253,7 @@ void MoveBullets(int playerPosY, int playerPosX, int playerSizeX, int playerSize
             if (bulletActive[i] == true) {
                 bulletTimer[i]++;
             }
-            if (bulletTimer[i] >= 600) {
+            if (bulletTimer[i] >= 300) {
                 bulletActive[i] = false;
                 bulletTimer[i] = 0;
             }
@@ -848,7 +848,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
                     0, 0, 1, 1, 0, WHITE);  // 白いボックスを描画
             }
 
-           //DrawBeams(startLineX, startLineY, goalLineX, goalLineY, BLACK);
+            //DrawBeams(startLineX, startLineY, goalLineX, goalLineY, BLACK);
 
             bossColor = WHITE;
 
