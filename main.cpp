@@ -38,55 +38,54 @@ struct FireParticle {
 const int kMaxParticles = 100; // パーティクルの最大数
 Particle particles[kMaxParticles];
 
-const int kMaxFireParticles = 200; // パーティクルの最大数
+const int kMaxBlackParticles = 200; // パーティクルの最大数
 const int kScreenWidth = 1600;  // 画面の幅
 const int kScreenHeight = 900;  // 画面の高さ
-FireParticle fireParticles[kMaxFireParticles]; // パーティクル配列
+FireParticle blackParticles[kMaxBlackParticles]; // パーティクル配列
 
-void InitializeFireParticles() {
-    for (int i = 0; i < kMaxFireParticles; ++i) {
-        fireParticles[i].x = static_cast<float>(rand() % kScreenWidth);
-        fireParticles[i].y = static_cast<float>(rand() % kScreenHeight);
-        fireParticles[i].size = static_cast<float>(rand() % 3 + 1); // サイズ5～15
-        fireParticles[i].speedY = static_cast<float>(rand() % 5 + 1); // 上昇速度1～5
-        fireParticles[i].alpha = static_cast<float>(rand() % 50 + 50) / 100.0f; // 透明度0.5～1.0
-        fireParticles[i].active = true;
+void InitializeBlackParticles() {
+    for (int i = 0; i < kMaxBlackParticles; ++i) {
+        blackParticles[i].x = static_cast<float>(rand() % kScreenWidth);
+        blackParticles[i].y = static_cast<float>(rand() % kScreenHeight);
+        blackParticles[i].size = static_cast<float>(rand() % 3 + 1); // サイズ5～15
+        blackParticles[i].speedY = static_cast<float>(rand() % 5 + 1); // 上昇速度1～5
+        blackParticles[i].alpha = static_cast<float>(rand() % 50 + 50) / 100.0f; // 透明度0.5～1.0
+        blackParticles[i].active = true;
     }
 }
 
-void UpdateFireParticles() {
-    for (int i = 0; i < kMaxFireParticles; ++i) {
-        if (fireParticles[i].active) {
-            fireParticles[i].y -= fireParticles[i].speedY; // 上に移動
+void UpdateBlackParticles() {
+    for (int i = 0; i < kMaxBlackParticles; ++i) {
+        if (blackParticles[i].active) {
+            blackParticles[i].y -= blackParticles[i].speedY; // 上に移動
 
             // 画面外に出たらリセット
-            if (fireParticles[i].y < 0) {
-                fireParticles[i].x = static_cast<float>(rand() % kScreenWidth);
-                fireParticles[i].y = static_cast<float>(kScreenHeight);
-                fireParticles[i].size = static_cast<float>(rand() % 3 + 1);
-                fireParticles[i].speedY = static_cast<float>(rand() % 5 + 1);
-                fireParticles[i].alpha = static_cast<float>(rand() % 50 + 50) / 100.0f;
+            if (blackParticles[i].y < 0) {
+                blackParticles[i].x = static_cast<float>(rand() % kScreenWidth);
+                blackParticles[i].y = static_cast<float>(kScreenHeight);
+                blackParticles[i].size = static_cast<float>(rand() % 3 + 1);
+                blackParticles[i].speedY = static_cast<float>(rand() % 5 + 1);
+                blackParticles[i].alpha = static_cast<float>(rand() % 50 + 50) / 100.0f;
             }
         }
     }
 }
 
-void DrawFireParticles() {
-    for (int i = 0; i < kMaxFireParticles; ++i) {
-        if (fireParticles[i].active) {
+void DrawBlackParticles() {
+    for (int i = 0; i < kMaxBlackParticles; ++i) {
+        if (blackParticles[i].active) {
             Novice::DrawEllipse(
-                static_cast<int>(fireParticles[i].x),
-                static_cast<int>(fireParticles[i].y),
-                static_cast<int>(fireParticles[i].size),
-                static_cast<int>(fireParticles[i].size),
+                static_cast<int>(blackParticles[i].x),
+                static_cast<int>(blackParticles[i].y),
+                static_cast<int>(blackParticles[i].size),
+                static_cast<int>(blackParticles[i].size),
                 0.0f,
-                RED,
+                0x191970,
                 kFillModeSolid
             );
         }
     }
 }
-
 
 void InitializeParticles() {
     for (int i = 0; i < kMaxParticles; ++i) {
@@ -462,7 +461,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
     int jumpVelocity = 0; // ジャンプの速度
     const int gravity = 2; // 重力加速度
     const int jumpPower = 35; // ジャンプの初速度
-    InitializeFireParticles();
+    InitializeBlackParticles();
 
     // ウィンドウの×ボタンが押されるまでループ
     while (Novice::ProcessMessage() == 0) {
@@ -659,7 +658,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
             // パーティクル更新
             UpdateParticles();
-            UpdateFireParticles();
+            UpdateBlackParticles();
             //ボスの近接攻撃のクールタイム
             if (bossAttackTimeFlag) {
                 bossAttackCoolTime++;
@@ -782,7 +781,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
             Novice::DrawSprite(0, 0, stageBackGround, 1.2f, 1.2f, 0.0f, WHITE);
             // パーティクル描画
             DrawParticles();
-            DrawFireParticles();
+            DrawBlackParticles();
             // 地面の描画
             Novice::DrawBox(0, 600, 1600, 200, 0.0f, 0xb8860b, kFillModeSolid);
             // 自機の残像を描画（透明度を適用）
