@@ -470,7 +470,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
                 }
             }
             //プレイヤーのHPゲージ(仮置き)
-            Novice::DrawSprite(50, 500, playerGauge, 1.0f, 1.0f, 0.0f, WHITE);
+            Novice::DrawSprite(100, 750, playerGauge, 1.0f, 1.0f, 0.0f, WHITE);
 
             // ゲーム内でのビームと自機の衝突判定
             for (int i = 0; i < 7; ++i) {
@@ -502,7 +502,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
                     Novice::DrawSprite(bossPosX, bossPosY, catBossImage, 1.0f, 1.0f, 0.0f, WHITE);
                 }
                 //ボスゲージ（仮置き）
-                Novice::DrawSprite(200, 100, bossGauge, 1.0f, 1.0f, 0.0f, WHITE);
+                Novice::DrawSprite(400, 100, bossGauge, 1.0f, 1.0f, 0.0f, WHITE);
             }
             // 敵の弾の描画
             for (int i = 0; i < numOfBullets; ++i) {
