@@ -21,7 +21,70 @@ struct Circle {
     float radius;
 };
 
+struct Particle {
+    float x, y;       // パーティクルの位置
+    float vx, vy;     // パーティクルの速度
+    float size;       // パーティクルのサイズ
+    float alpha;      // パーティクルの透明度
+    bool active;      // パーティクルが有効かどうか
+};
+const int kMaxParticles = 100; // パーティクルの最大数
+Particle particles[kMaxParticles];
+
 std::vector<Circle> circles; // 円のリスト
+
+void InitializeParticles() {
+    for (int i = 0; i < kMaxParticles; ++i) {
+        particles[i] = { 0, 0, 0, 0, 0, 0, false };
+    }
+}
+
+void GenerateParticle(float bossX, float bossY) {
+    for (int i = 0; i < kMaxParticles; ++i) {
+        if (!particles[i].active) {
+            particles[i].x = bossX + (rand() % 100 - 50); // ボス周囲にランダム生成
+            particles[i].y = bossY + (rand() % 100 - 50);
+            particles[i].vx = (rand() % 20 - 10) * 0.1f; // ランダムな速度
+            particles[i].vy = (rand() % 20 - 10) * 0.1f;
+            particles[i].size = static_cast<float>(rand() % 5 + 3);
+            particles[i].alpha = 1.0f;                  // 初期の透明度
+            particles[i].active = true;
+            break;
+        }
+    }
+}
+
+void UpdateParticles() {
+    for (int i = 0; i < kMaxParticles; ++i) {
+        if (particles[i].active) {
+            particles[i].x += particles[i].vx;
+            particles[i].y += particles[i].vy;
+            particles[i].alpha -= 0.01f; // 透明度を徐々に減少
+
+            // 消滅条件
+            if (particles[i].alpha <= 0) {
+                particles[i].active = false;
+            }
+        }
+    }
+}
+
+void DrawParticles() {
+    for (int i = 0; i < kMaxParticles; ++i) {
+        if (particles[i].active) {
+            // パーティクルの描画
+            Novice::DrawEllipse(
+                static_cast<int>(particles[i].x),
+                static_cast<int>(particles[i].y),
+                static_cast<int>(particles[i].size),
+                static_cast<int>(particles[i].size),
+                0.0f,
+                BLACK,
+                kFillModeSolid
+            );
+        }
+    }
+}
 
 // 地面の位置
 const int groundHeight = GetSystemMetrics(SM_CYSCREEN) - 50;
@@ -313,7 +376,9 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
     int boxPosX[7];
     int boxPosY[7];
     float beamSpeed[7] = { 40.0f };  // スタート時の速度
-
+    float bossCenterX = 0;
+    float bossCenterY = 0;
+    
     //画像の読み込み
     int playerImage[7] = {
         Novice::LoadTexture("./Resources/move1.png"),
@@ -452,7 +517,9 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
                 randomBeamIndex = rand() % 3;  // 0から6の間でランダムに選択
                 bossBeamCooldown = 0; // クールダウンリセット
             }
-
+            // ボスの座標
+            bossCenterX = static_cast<float>(bossPosX) + static_cast<float>(bossSizeX) / 2.0f;
+            bossCenterY = static_cast<float>(bossPosY) + static_cast<float>(bossSizeY) / 2.0f;
             if (randomBeamIndex != -1) {
                 // ランダムで選ばれたビームを発射する処理
                 switch (randomBeamIndex) {
@@ -529,7 +596,13 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
                 yBeamFlagInProgress = true;
                 randomBeamIndex = -1;
             }
+            // パーティクル生成
+            if (rand() % 5 == 0) { // 毎フレームではなく間引いて生成
+                GenerateParticle(bossCenterX, bossCenterY);
+            }
 
+            // パーティクル更新
+            UpdateParticles();
             //ボスの近接攻撃のクールタイム
             if (bossAttackTimeFlag) {
                 bossAttackCoolTime++;
@@ -650,6 +723,8 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
         case GAME:
             //背景描画
             Novice::DrawSprite(0, 0, stageBackGround, 1.2f, 1.2f, 0.0f, WHITE);
+            // パーティクル描画
+            DrawParticles();
             // 地面の描画
             Novice::DrawBox(0, 600, 1600, 200, 0.0f, 0xb8860b, kFillModeSolid);
             // 自機の残像を描画（透明度を適用）
