@@ -485,15 +485,18 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
             //プレイヤーのHPゲージ(仮置き)
             Novice::DrawSprite(100, 750, playerGauge, 1.0f, 1.0f, 0.0f, WHITE);
 
+            if (playerColor == RED) {
+                playerColor = WHITE;
+            }
             // ゲーム内でのビームと自機の衝突判定
             for (int i = 0; i < 7; ++i) {
                 if (CheckBeamCollisionWithPlayer(posX, posY, sizeX, sizeY, startLineX[i], startLineY[i], goalLineX[i], goalLineY[i])) {
                     playerHP -= 10;  // 自機がビームに当たった場合のダメージ
                    // Novice::DrawBox(posX, posY, sizeX, sizeY, 0.0f, RED, kFillModeSolid); // 赤色で自機を描画してダメージを表示
-                    Novice::DrawSprite(posX, posY, playerImage[6], 1.0f, 1.0f, 0.0f, RED);
+                    playerColor = RED;
                 }
             }
-            
+           
             //ボス
             if (bossHP > 0) {
                 //Novice::DrawBox(bossPosX, bossPosY, bossSizeX, bossSizeY, 0.0f, bossColor, kFillModeSolid);
@@ -509,10 +512,10 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
                     }
                 }
                 if (bossImageChange == 0) {
-                    Novice::DrawSprite(bossPosX, bossPosY, bossImage, 1.0f, 1.0f, 0.0f, WHITE);
+                    Novice::DrawSprite(bossPosX, bossPosY, bossImage, 1.0f, 1.0f, 0.0f, bossColor);
                 }
                 if (bossImageChange == 1) {
-                    Novice::DrawSprite(bossPosX, bossPosY, catBossImage, 1.0f, 1.0f, 0.0f, WHITE);
+                    Novice::DrawSprite(bossPosX, bossPosY, catBossImage, 1.0f, 1.0f, 0.0f, bossColor);
                 }
                 //ボスゲージ（仮置き）
                 Novice::DrawSprite(400, 100, bossGauge, 1.0f, 1.0f, 0.0f, WHITE);
