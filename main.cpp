@@ -64,33 +64,33 @@ void LaunchCircles(float startX, float startY) {
     }
 }
 
-void DrawLightningLine(int startX, int startY, int endX, int endY, unsigned int color) {
-    const int segments = 400;  // 分割するセグメント数
-    const int maxOffset = 40;  // セグメントごとの最大オフセット値
+//void DrawLightningLine(int startX, int startY, int endX, int endY, unsigned int color) {
+//    const int segments = 400;  // 分割するセグメント数
+//    const int maxOffset = 40;  // セグメントごとの最大オフセット値
+//
+//    int prevX = startX;
+//    int prevY = startY;
+//
+//    for (int i = 1; i <= segments; ++i) {
+//        float t = static_cast<float>(i) / segments;
+//        int currentX = static_cast<int>(startX + (endX - startX) * t);
+//        int currentY = static_cast<int>(startY + (endY - startY) * t);
+//
+//        currentX += (rand() % (2 * maxOffset)) - maxOffset;
+//        currentY += (rand() % (2 * maxOffset)) - maxOffset;
+//
+//        Novice::DrawLine(prevX, prevY, currentX, currentY, color);
+//
+//        prevX = currentX;
+//        prevY = currentY;
+//    }
+//}
 
-    int prevX = startX;
-    int prevY = startY;
-
-    for (int i = 1; i <= segments; ++i) {
-        float t = static_cast<float>(i) / segments;
-        int currentX = static_cast<int>(startX + (endX - startX) * t);
-        int currentY = static_cast<int>(startY + (endY - startY) * t);
-
-        currentX += (rand() % (2 * maxOffset)) - maxOffset;
-        currentY += (rand() % (2 * maxOffset)) - maxOffset;
-
-        Novice::DrawLine(prevX, prevY, currentX, currentY, color);
-
-        prevX = currentX;
-        prevY = currentY;
-    }
-}
-
-void DrawBeams(int* startLineX, int* startLineY, int* goalLineX, int* goalLineY, unsigned int color) {
-    for (int i = 0; i < 7; ++i) {
-        DrawLightningLine(startLineX[i], startLineY[i], goalLineX[i], goalLineY[i], color);
-    }
-}
+//void DrawBeams(int* startLineX, int* startLineY, int* goalLineX, int* goalLineY, unsigned int color) {
+//    for (int i = 0; i < 7; ++i) {
+//        DrawLightningLine(startLineX[i], startLineY[i], goalLineX[i], goalLineY[i], color);
+//    }
+//}
 
 bool CheckCollision(float leftTopX, float leftTopY, float rightTopX, float rightTopY, float leftBottomX, float leftBottomY, float rightBottomX, float rightBottomY, int bossPosX, int bossPosY, int bossSizeX, int bossSizeY) {
     // ボスの矩形領域
@@ -329,6 +329,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
     int bossGauge = Novice::LoadTexture("./Resources/bossgauge.png");
     int stageBackGround = Novice::LoadTexture("./Resources/haikei0003.png");
     int playerGauge = Novice::LoadTexture("./Resources/playerGauge.png");
+    //int slash = Novice::LoadTexture("./Resources/slash.png");
 
     int playerImageFrameCount = 0;
     int isTurnLeft = false;
@@ -699,44 +700,32 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
             //上下移動の時も歩くようにする
             if (keys[DIK_W]) {
                 if (isTurnLeft == 1) {
-                    playerImageFrameCount++;
-                    if (playerImageFrameCount >= 60) {
-                        playerImageFrameCount = 0;
-                    }
-                    Novice::DrawSprite(posX, posY, playerImage[playerImageFrameCount / 12], 1.0f, 1.0f, 0.0f, playerColor);
+                    Novice::DrawSprite(posX, posY, playerImage[6], 1.0f, 1.0f, 0.0f, playerColor);
                 }
                 if (isTurnRight == 1) {
-                    playerImageFrameCount++;
-                    if (playerImageFrameCount >= 60) {
-                        playerImageFrameCount = 0;
-                    }
-                    Novice::DrawSprite(posX + sizeX, posY, playerImage[playerImageFrameCount / 12], -1.0f, 1.0f, 0.0f, playerColor);
+                    Novice::DrawSprite(posX + sizeX, posY, playerImage[6], -1.0f, 1.0f, 0.0f, playerColor);
                 }
             }
             if (keys[DIK_S]) {
                 if (isTurnLeft == 1) {
-                    playerImageFrameCount++;
-                    if (playerImageFrameCount >= 60) {
-                        playerImageFrameCount = 0;
-                    }
-                    Novice::DrawSprite(posX, posY, playerImage[playerImageFrameCount / 12], 1.0f, 1.0f, 0.0f, playerColor);
+                    Novice::DrawSprite(posX, posY, playerImage[6], 1.0f, 1.0f, 0.0f, playerColor);
                 }
                 if (isTurnRight == 1) {
-                    playerImageFrameCount++;
-                    if (playerImageFrameCount >= 60) {
-                        playerImageFrameCount = 0;
-                    }
-                    Novice::DrawSprite(posX + sizeX, posY, playerImage[playerImageFrameCount / 12], -1.0f, 1.0f, 0.0f, playerColor);
+                    Novice::DrawSprite(posX + sizeX, posY, playerImage[6], -1.0f, 1.0f, 0.0f, playerColor);
                 }
             }
             //プレイヤーのHPゲージ(仮置き)
             Novice::DrawSprite(100, 750, playerGauge, 1.0f, 1.0f, 0.0f, WHITE);
 
             // ゲーム内でのビームと自機の衝突判定
+            if (playerColor == RED) {
+                playerColor = WHITE;
+            }
             for (int i = 0; i < 7; ++i) {
                 if (CheckBeamCollisionWithPlayer(posX, posY, sizeX, sizeY, startLineX[i], startLineY[i], goalLineX[i], goalLineY[i])) {
                     playerHP -= 10;  // 自機がビームに当たった場合のダメージ
-                    Novice::DrawBox(posX, posY, sizeX, sizeY, 0.0f, RED, kFillModeSolid); // 赤色で自機を描画してダメージを表示
+                    //Novice::DrawBox(posX, posY, sizeX, sizeY, 0.0f, RED, kFillModeSolid); // 赤色で自機を描画してダメージを表示
+                    playerColor = RED;
                 }
             }
 
@@ -859,7 +848,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
                     0, 0, 1, 1, 0, WHITE);  // 白いボックスを描画
             }
 
-            DrawBeams(startLineX, startLineY, goalLineX, goalLineY, BLACK);
+           //DrawBeams(startLineX, startLineY, goalLineX, goalLineY, BLACK);
 
             bossColor = WHITE;
 
