@@ -336,6 +336,11 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
     int playerColor = WHITE;
 
     int bossImageChange = false;
+    // ジャンプ関連の変数
+    bool isJumping = false; // ジャンプ中かどうか
+    int jumpVelocity = 0; // ジャンプの速度
+    const int gravity = 2; // 重力加速度
+    const int jumpPower = 35; // ジャンプの初速度
 
     // ウィンドウの×ボタンが押されるまでループ
     while (Novice::ProcessMessage() == 0) {
@@ -642,6 +647,8 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
         case TITLE:
             break;
         case GAME:
+            //背景描画
+            Novice::DrawSprite(0, 0, stageBackGround, 1.2f, 1.2f, 0.0f, WHITE);
             // 地面の描画
             Novice::DrawBox(0, 600, 1600, 200, 0.0f, 0xb8860b, kFillModeSolid);
             // 自機の残像を描画（透明度を適用）
@@ -725,18 +732,14 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
             //プレイヤーのHPゲージ(仮置き)
             Novice::DrawSprite(100, 750, playerGauge, 1.0f, 1.0f, 0.0f, WHITE);
 
-            if (playerColor == RED) {
-                playerColor = WHITE;
-            }
             // ゲーム内でのビームと自機の衝突判定
             for (int i = 0; i < 7; ++i) {
                 if (CheckBeamCollisionWithPlayer(posX, posY, sizeX, sizeY, startLineX[i], startLineY[i], goalLineX[i], goalLineY[i])) {
                     playerHP -= 10;  // 自機がビームに当たった場合のダメージ
-                   // Novice::DrawBox(posX, posY, sizeX, sizeY, 0.0f, RED, kFillModeSolid); // 赤色で自機を描画してダメージを表示
-                    playerColor = RED;
+                    Novice::DrawBox(posX, posY, sizeX, sizeY, 0.0f, RED, kFillModeSolid); // 赤色で自機を描画してダメージを表示
                 }
             }
-           
+
             //ボス
             if (bossHP > 0) {
                 //Novice::DrawBox(bossPosX, bossPosY, bossSizeX, bossSizeY, 0.0f, bossColor, kFillModeSolid);
@@ -752,10 +755,10 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
                     }
                 }
                 if (bossImageChange == 0) {
-                    Novice::DrawSprite(bossPosX, bossPosY, bossImage, 1.0f, 1.0f, 0.0f, bossColor);
+                    Novice::DrawSprite(bossPosX, bossPosY, bossImage, 1.0f, 1.0f, 0.0f, WHITE);
                 }
                 if (bossImageChange == 1) {
-                    Novice::DrawSprite(bossPosX, bossPosY, catBossImage, 1.0f, 1.0f, 0.0f, bossColor);
+                    Novice::DrawSprite(bossPosX, bossPosY, catBossImage, 1.0f, 1.0f, 0.0f, WHITE);
                 }
                 //ボスゲージ（仮置き）
                 Novice::DrawSprite(400, 100, bossGauge, 1.0f, 1.0f, 0.0f, WHITE);
