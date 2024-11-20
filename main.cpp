@@ -24,7 +24,7 @@ struct Circle {
 std::vector<Circle> circles; // 円のリスト
 
 // 地面の位置
-const int groundHeight = GetSystemMetrics(SM_CYSCREEN) - 150;
+const int groundHeight = GetSystemMetrics(SM_CYSCREEN) - 50;
 int posX = 500;
 int posY = groundHeight - 120;
 const int sizeX = 100;
