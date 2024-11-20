@@ -282,6 +282,19 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
             if (keys[DIK_S]) posY += speed;
             if (keys[DIK_A]) posX -= speed;
             if (keys[DIK_D]) posX += speed;
+            //プレイヤーが画面外に出ない処理
+            if (posX <= 0) {
+                posX = 0;
+            }
+            if (posX >= 1540 - sizeX) {
+                posX = 1540 - sizeX;
+            }
+            if (posY <= 0) {
+                posY = 0;
+            }
+            if (posY >= 860-sizeY) {
+                posY = 860 - sizeY;
+            }
 
             // ビームフラグの管理
             if (keys[DIK_1] && !preKeys[DIK_1]) xBeamFlag = true;
