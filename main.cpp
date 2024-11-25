@@ -516,12 +516,12 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
         Novice::LoadTexture("./Resources/move0.png"),
     };
     int bossImage[4] = {
-        Novice::LoadTexture("./Resources/move1.png"),
-        Novice::LoadTexture("./Resources/move2.png"),
-        Novice::LoadTexture("./Resources/move3.png"),
-        Novice::LoadTexture("./Resources/move4.png"),
-    }
-    int bossImage = Novice::LoadTexture("./Resources/darkPhenix01.png");
+        Novice::LoadTexture("./Resources/enemyBoss1.png"),
+        Novice::LoadTexture("./Resources/enemyBoss2.png"),
+        Novice::LoadTexture("./Resources/enemyBoss3.png"),
+        Novice::LoadTexture("./Resources/enemyBoss4.png"),
+    };
+    //int bossImage = Novice::LoadTexture("./Resources/darkPhenix01.png");
     int catBossImage = Novice::LoadTexture("./Resources/bossCatAttack01.png");
     int bossGauge = Novice::LoadTexture("./Resources/bossgauge.png");
     int stageBackGround = Novice::LoadTexture("./Resources/haikei0003.png");
@@ -538,6 +538,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
     int slashSounds = Novice::LoadAudio("./Resources/maou_se_battle03.mp3");
 
     int playerImageFrameCount = 0;
+    int bossImageFrameCount = 0;
     int isTurnLeft = false;
     int isTurnRight = true;
     int bossImageChange = false;
@@ -1077,7 +1078,11 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
                     }
                 }
                 if (bossImageChange == 0) {
-                    Novice::DrawSprite(bossPosX, bossPosY, bossImage, 1.0f, 1.0f, 0.0f, bossColor);
+                    bossImageFrameCount++;
+                    if (bossImageFrameCount >= 45) {
+                        bossImageFrameCount = 0;
+                    }
+                    Novice::DrawSprite(bossPosX, bossPosY, bossImage[bossImageFrameCount/15], 1.0f, 1.0f, 0.0f, bossColor);
                 }
                 if (bossImageChange == 1) {
                     Novice::DrawSprite(bossPosX, bossPosY, catBossImage, 1.0f, 1.0f, 0.0f, bossColor);
@@ -1090,7 +1095,12 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
                 // 透明度をアルファ値に変換（0.0～1.0 → 0x00～0xFF）
                 int alphaValue = static_cast<int>(playerTrail[i].alpha * 255.0f);
                 unsigned int colorWithAlpha = (alphaValue << 24) | 0x10e6e6fa; // 透明度を上位8ビットに設定
-                Novice::DrawSprite(static_cast<int>(playerTrail[i].x), static_cast<int>(playerTrail[i].y), playerImage[playerImageFrameCount / 12], 1, 1, 0.0f, colorWithAlpha);
+                if (keys[DIK_A] && !keys[DIK_D]) {
+                    Novice::DrawSprite(static_cast<int>(playerTrail[i].x), static_cast<int>(playerTrail[i].y), playerImage[playerImageFrameCount / 12], 1, 1, 0.0f, colorWithAlpha);
+                }
+                if (!keys[DIK_A] && keys[DIK_D]) {
+                    Novice::DrawSprite(static_cast<int>(playerTrail[i].x)+sizeX, static_cast<int>(playerTrail[i].y), playerImage[playerImageFrameCount / 12], -1, 1, 0.0f, colorWithAlpha);
+                }
             }
             //プレイヤーの画像描画
             if (keys[DIK_A] && !keys[DIK_D]) {
