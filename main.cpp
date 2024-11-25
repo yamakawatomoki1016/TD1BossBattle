@@ -256,7 +256,7 @@ void DrawSlash(int startX, int startY, int targetX, int targetY, unsigned int co
     if (bossHP > 0) {
         if (CheckCollision(leftTopX, leftTopY, rightTopX, rightTopY, leftBottomX, leftBottomY, rightBottomX, rightBottomY, bossPosX, bossPosY, bossSizeX, bossSizeY)) {
             bossHP -= 1;
-            bossColor = RED; // 当たった瞬間だけ黒に変更
+            bossColor = RED; // 当たった瞬間だけ赤に変更
         }
     }
 }
