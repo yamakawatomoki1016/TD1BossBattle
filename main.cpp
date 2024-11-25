@@ -247,13 +247,15 @@ void DrawSlash(int startX, int startY, int targetX, int targetY, unsigned int co
     float rightBottomY = rightTopY + length * sinf(angle);
 
     // ボックスを描画
+    //int slash = Novice::LoadTexture("./Resources/slash.png");
     Novice::DrawQuad(int(leftTopX), int(leftTopY), int(rightTopX), int(rightTopY), int(leftBottomX), int(leftBottomY), int(rightBottomX), int(rightBottomY), 0, 0, 1, 1, 0, color);
+
 
     // 当たり判定
     if (bossHP > 0) {
         if (CheckCollision(leftTopX, leftTopY, rightTopX, rightTopY, leftBottomX, leftBottomY, rightBottomX, rightBottomY, bossPosX, bossPosY, bossSizeX, bossSizeY)) {
             bossHP -= 1;
-            bossColor = BLACK; // 当たった瞬間だけ黒に変更
+            bossColor = RED; // 当たった瞬間だけ黒に変更
         }
     }
 }
@@ -449,6 +451,8 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
     int stageBackGround = Novice::LoadTexture("./Resources/haikei0003.png");
     int playerGauge = Novice::LoadTexture("./Resources/playerGauge.png");
     //int slash = Novice::LoadTexture("./Resources/slash.png");
+    int title = Novice::LoadTexture("./Resources/title.png");
+    int gameover = Novice::LoadTexture("./Resources/zannnenn.png");
 
     int playerImageFrameCount = 0;
     int isTurnLeft = false;
@@ -775,6 +779,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
         switch (scene)
         {
         case TITLE:
+            Novice::DrawSprite(0, 0, title, 1.2f, 1.2f, 0.0f, WHITE);
             break;
         case GAME:
             //背景描画
@@ -855,10 +860,10 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
                     }
                 }
                 if (bossImageChange == 0) {
-                    Novice::DrawSprite(bossPosX, bossPosY, bossImage, 1.0f, 1.0f, 0.0f, WHITE);
+                    Novice::DrawSprite(bossPosX, bossPosY, bossImage, 1.0f, 1.0f, 0.0f, bossColor);
                 }
                 if (bossImageChange == 1) {
-                    Novice::DrawSprite(bossPosX, bossPosY, catBossImage, 1.0f, 1.0f, 0.0f, WHITE);
+                    Novice::DrawSprite(bossPosX, bossPosY, catBossImage, 1.0f, 1.0f, 0.0f, bossColor);
                 }
                 //ボスゲージ（仮置き）
                 Novice::DrawSprite(400, 100, bossGauge, 1.0f, 1.0f, 0.0f, WHITE);
@@ -965,7 +970,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
             //自機の攻撃
             if (Novice::IsTriggerMouse(0)) {
-                DrawSlash(posX + sizeX / 2, posY + sizeY / 2, mouseX, mouseY, BLACK, 60.0f, bossPosX, bossPosY, bossSizeX, bossSizeY);
+                DrawSlash(posX + sizeX / 2, posY + sizeY / 2, mouseX, mouseY, WHITE, 60.0f, bossPosX, bossPosY, bossSizeX, bossSizeY);
             }
 
             Novice::ScreenPrintf(20, 20, "bossHP : %d", bossHP);
@@ -977,6 +982,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
         case GAME_CLEAR:
             break;
         case GAME_OVER:
+            Novice::DrawSprite(0, 0, gameover, 1.2f, 1.2f, 0.0f, WHITE);
             break;
         }
 
