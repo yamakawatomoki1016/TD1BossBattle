@@ -292,7 +292,7 @@ bool CheckCollision(float leftTopX, float leftTopY, float rightTopX, float right
 }
 
 int bossColor = WHITE;
-int bossHP = 50;
+int bossHP = 200;
 void DrawSlash(int startX, int startY, int targetX, int targetY, unsigned int color, float length, int bossPosX, int bossPosY, int bossSizeX, int bossSizeY) {
     const float width = 130.0f;
 
@@ -568,6 +568,17 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
     int randX = 0;
     int randY = 0;
+
+    //ボスのHPバー
+    int bossHPLeftTopX = 503;
+    int bossHPLeftTopY = 45;
+    int bossHPLeftBottomX = 462;
+    int bossHPLeftBottomY = 105;
+    int bossHPRightTopX = 1079;
+    int bossHPRightTopY = 45;
+    int bossHPRightBottomX = 1037;
+    int bossHPRightBottomY = 105;
+    int bossHPGrh = Novice::LoadTexture("white1x1.png");
    
     // ウィンドウの×ボタンが押されるまでループ
     while (Novice::ProcessMessage() == 0) {
@@ -641,8 +652,8 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
                     playerTrail[i].alpha = EaseOut(static_cast<float>(i) / static_cast<float>(playerTrail.size()));
                 }
 
-                // ENTERキーが押された時の処理
-                if (bossHP <= 20) {
+                //円形の攻撃をしてくる
+                if (bossHP <= 150) {
                     if (isFirstLaunch) {
                         // 最初の発射
                         LaunchCircles(static_cast<float>(bossPosX) + bossSizeX / 2, static_cast<float>(bossPosY) + bossSizeY / 2);
@@ -938,21 +949,12 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
                 for (int i = 0; i < 7; ++i) {
                     if (CheckBeamCollisionWithPlayer(posX, posY, sizeX, sizeY, startLineX[i], startLineY[i], goalLineX[i], goalLineY[i])) {
                         playerHP -= 10;  // 自機がビームに当たった場合のダメージ
-                        //Novice::DrawBox(posX, posY, sizeX, sizeY, 0.0f, RED, kFillModeSolid); // 赤色で自機を描画してダメージを表示
                         playerColor = RED;
-                    }
-                }
-                // 飛んでいる円を描画
-                for (const auto& circle : circles) {
-                    if (circle.active) {
-                        Novice::DrawSprite(static_cast<int>(circle.x) - 16,
-                            static_cast<int>(circle.y) - 16, blackBall, 1, 1, .0f, WHITE);
                     }
                 }
                 // 敵のホーミング弾の描画
                 for (int i = 0; i < numOfBullets; ++i) {
                     if (bulletActive[i]) {
-                        //Novice::DrawEllipse(int(bulletPosX[i]), int(bulletPosY[i]), 20, 20, 0.0f, RED, kFillModeSolid); // 弾の描画
                         homingBulletTimer++;
                         if (homingBulletTimer <= 20) {
                             Novice::DrawSprite(int(bulletPosX[i]) - 15, int(bulletPosY[i]) - 15, homingBullet1, 1.0f, 1.0f, 0.0f, WHITE);
@@ -1079,7 +1081,6 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
             DrawBlackParticles();
             //ボス
             if (bossHP > 0) {
-                //Novice::DrawBox(bossPosX, bossPosY, bossSizeX, bossSizeY, 0.0f, bossColor, kFillModeSolid);
                 //デバック用のボス画像切り替え(後からボス描画以外消去)
                 if (keys[DIK_C] && !preKeys[DIK_C]) {
                     if (bossImageChange == 0) {
@@ -1101,8 +1102,17 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
                 if (bossImageChange == 1) {
                     Novice::DrawSprite(bossPosX, bossPosY, catBossImage, 1.0f, 1.0f, 0.0f, bossColor);
                 }
+                // 飛んでいる円を描画
+                for (const auto& circle : circles) {
+                    if (circle.active) {
+                        Novice::DrawSprite(static_cast<int>(circle.x) - 16,
+                            static_cast<int>(circle.y) - 16, blackBall, 1, 1, .0f, WHITE);
+                    }
+                }
                 //ボスゲージ（仮置き）
-                Novice::DrawSprite(400, 100, bossGauge, 1.0f, 1.0f, 0.0f, WHITE);
+                Novice::DrawQuad(bossHPLeftTopX, bossHPLeftTopY, bossHPRightTopX, bossHPRightTopY, bossHPLeftBottomX, bossHPLeftBottomY, bossHPRightBottomX, bossHPRightBottomY, 0, 0, 1, 1, bossHPGrh, WHITE);
+                //ボスのHPバー
+                Novice::DrawSprite(450, 30, bossGauge, 1.0f, 1.0f, 0.0f, WHITE);
             }
 
             // 自機の残像を描画（透明度を反映）
