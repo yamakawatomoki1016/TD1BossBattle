@@ -460,6 +460,9 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
     //int slash = Novice::LoadTexture("./Resources/slash.png");
     int title = Novice::LoadTexture("./Resources/title.png");
     int gameover = Novice::LoadTexture("./Resources/zannnenn.png");
+    int homingBullet1 = Novice::LoadTexture("./Resources/tuibidan1.png");
+    int homingBullet2 = Novice::LoadTexture("./Resources/tuibidan2.png");
+    int homingBullet3 = Novice::LoadTexture("./Resources/tuibidan3.png");
 
     //音の読み込み
     //int homingBulletSounds = Novice::LoadAudio("./Resources/maou_se_sound03.mp3");
@@ -468,8 +471,8 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
     int playerImageFrameCount = 0;
     int isTurnLeft = false;
     int isTurnRight = true;
-
     int bossImageChange = false;
+    int homingBulletTimer = 0;
     // ジャンプ関連の変数
     bool isJumping = false; // ジャンプ中かどうか
     int jumpVelocity = 0; // ジャンプの速度
@@ -873,7 +876,20 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
             // 敵のホーミング弾の描画
             for (int i = 0; i < numOfBullets; ++i) {
                 if (bulletActive[i]) {
-                    Novice::DrawEllipse(int(bulletPosX[i]), int(bulletPosY[i]), 20, 20, 0.0f, RED, kFillModeSolid); // 弾の描画
+                    //Novice::DrawEllipse(int(bulletPosX[i]), int(bulletPosY[i]), 20, 20, 0.0f, RED, kFillModeSolid); // 弾の描画
+                    homingBulletTimer++;
+                    if (homingBulletTimer <= 20) {
+                        Novice::DrawSprite(int(bulletPosX[i]) - 15, int(bulletPosY[i]) - 15, homingBullet1, 1.0f, 1.0f, 0.0f, WHITE);
+                    }
+                    if (homingBulletTimer > 20 && homingBulletTimer <= 40) {
+                        Novice::DrawSprite(int(bulletPosX[i]) - 15, int(bulletPosY[i]) - 15, homingBullet2, 1.0f, 1.0f, 0.0f, WHITE);
+                    }
+                    if (homingBulletTimer > 40 && homingBulletTimer < 60) {
+                        Novice::DrawSprite(int(bulletPosX[i]) - 15, int(bulletPosY[i]) - 15, homingBullet3, 1.0f, 1.0f, 0.0f, WHITE);
+                    }
+                    if (homingBulletTimer >= 60) {
+                        homingBulletTimer = 0;
+                    }
                 }
             }
             if (xBeamFlag && beamTimer[0] < 60) {
