@@ -515,6 +515,12 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
         Novice::LoadTexture("./Resources/move6.png"),
         Novice::LoadTexture("./Resources/move0.png"),
     };
+    int playerWaitImage[4] = {
+        Novice::LoadTexture("./Resources/playerWait1.png"),
+        Novice::LoadTexture("./Resources/playerWait2.png"),
+        Novice::LoadTexture("./Resources/playerWait3.png"),
+        Novice::LoadTexture("./Resources/playerWait4.png"),
+    };
     int bossImage[4] = {
         Novice::LoadTexture("./Resources/enemyBoss1.png"),
         Novice::LoadTexture("./Resources/enemyBoss2.png"),
@@ -538,6 +544,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
     int slashSounds = Novice::LoadAudio("./Resources/maou_se_battle03.mp3");
 
     int playerImageFrameCount = 0;
+    int playerWaitImageFrameCount = 0;
     int bossImageFrameCount = 0;
     int isTurnLeft = false;
     int isTurnRight = true;
@@ -1130,19 +1137,27 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
                 isTurnRight = true;
             }
             if (!keys[DIK_A] && !keys[DIK_D]) {
+                playerWaitImageFrameCount++;
+                if (playerWaitImageFrameCount >= 60) {
+                    playerWaitImageFrameCount = 0;
+                }
                 if (isTurnLeft == 1) {
-                    Novice::DrawSprite(posX, posY, playerImage[6], 1.0f, 1.0f, 0.0f, playerColor);
+                    Novice::DrawSprite(posX, posY, playerWaitImage[playerWaitImageFrameCount / 15], 1.0f, 1.0f, 0.0f, playerColor);
                 }
                 if (isTurnRight == 1) {
-                    Novice::DrawSprite(posX + sizeX, posY, playerImage[6], -1.0f, 1.0f, 0.0f, playerColor);
+                    Novice::DrawSprite(posX + sizeX, posY, playerWaitImage[playerWaitImageFrameCount / 15], -1.0f, 1.0f, 0.0f, playerColor);
                 }
             }
             if (keys[DIK_A] && keys[DIK_D]) {
+                playerWaitImageFrameCount++;
+                if (playerWaitImageFrameCount >= 60) {
+                    playerWaitImageFrameCount = 0;
+                }
                 if (isTurnLeft == 1) {
-                    Novice::DrawSprite(posX, posY, playerImage[6], 1.0f, 1.0f, 0.0f, playerColor);
+                    Novice::DrawSprite(posX, posY, playerWaitImage[playerWaitImageFrameCount / 15], 1.0f, 1.0f, 0.0f, playerColor);
                 }
                 if (isTurnRight == 1) {
-                    Novice::DrawSprite(posX + sizeX, posY, playerImage[6], -1.0f, 1.0f, 0.0f, playerColor);
+                    Novice::DrawSprite(posX + sizeX, posY, playerWaitImage[playerWaitImageFrameCount / 15], -1.0f, 1.0f, 0.0f, playerColor);
                 }
             }
 
