@@ -162,11 +162,11 @@ struct Position {
 };
 
 std::vector<Position> playerTrail;  // 自機の残像を保存するベクター
-const int MAX_TRAIL_LENGTH = 10;    // 残像の長さ（過去何フレーム分）
+const int MAX_TRAIL_LENGTH = 5;    // 残像の長さ（過去何フレーム分）
 
 // イージング関数（EaseOut）
 float EaseOut(float t) {
-    return t * (2.0f - t);  // tが0から1の間で滑らかに減少
+    return t * (12.0f - t);  // tが0から1の間で滑らかに減少
 }
 // 自作の max 関数
 float my_max(float a, float b) {
@@ -579,7 +579,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
         case GAME:
             
             if (battleStart == false) {
-                bossPosY += 10;
+                bossPosY += 5;
             }
             if (bossPosY >= 500 && battleStart == false) {
                 battleStart = true;
@@ -613,11 +613,6 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
                 playerTrail.push_back(Position{ (float)posX, (float)posY, 1.0f });  // 初期透明度は1.0
                 if (playerTrail.size() > MAX_TRAIL_LENGTH) {
                     playerTrail.erase(playerTrail.begin());  // 古い位置を削除
-                }
-
-                // 透明度をイージングで減少させる
-                for (int i = 0; i < playerTrail.size(); ++i) {
-                    playerTrail[i].alpha = EaseOut(static_cast<float>(i) / static_cast<float>(playerTrail.size()));
                 }
 
                 // 透明度をイージングで減少させる
@@ -1044,50 +1039,11 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
                         static_cast<int>(rightBottomX), static_cast<int>(rightBottomY),
                         0, 0, 1, 1, 0, WHITE);  // 白いボックスを描画
                 }
-                // 自機の残像を描画（透明度を適用）
-                for (int i = 0; i < playerTrail.size(); ++i) {
-                    Novice::DrawBox((int)playerTrail[i].x, (int)playerTrail[i].y, sizeX, sizeY, 0.0f, 0x98fb98, kFillModeSolid);
-                }
 
                 //自機の攻撃
                 if (Novice::IsTriggerMouse(0)) {
                     DrawSlash(posX + sizeX / 2, posY + sizeY / 2, mouseX, mouseY, WHITE, 60.0f, bossPosX, bossPosY, bossSizeX, bossSizeY);
                     Novice::PlayAudio(slashSounds, 0, 0.5f);
-                }
-                //プレイヤーの画像描画
-                if (keys[DIK_A] && !keys[DIK_D]) {
-                    playerImageFrameCount++;
-                    if (playerImageFrameCount >= 60) {
-                        playerImageFrameCount = 0;
-                    }
-                    Novice::DrawSprite(posX, posY, playerImage[playerImageFrameCount / 12], 1.0f, 1.0f, 0.0f, playerColor);
-                    isTurnLeft = true;
-                    isTurnRight = false;
-                }
-                if (keys[DIK_D] && !keys[DIK_A]) {
-                    playerImageFrameCount++;
-                    if (playerImageFrameCount >= 60) {
-                        playerImageFrameCount = 0;
-                    }
-                    Novice::DrawSprite(posX + sizeX, posY, playerImage[playerImageFrameCount / 12], -1.0f, 1.0f, 0.0f, playerColor);
-                    isTurnLeft = false;
-                    isTurnRight = true;
-                }
-                if (!keys[DIK_A] && !keys[DIK_D]) {
-                    if (isTurnLeft == 1) {
-                        Novice::DrawSprite(posX, posY, playerImage[6], 1.0f, 1.0f, 0.0f, playerColor);
-                    }
-                    if (isTurnRight == 1) {
-                        Novice::DrawSprite(posX + sizeX, posY, playerImage[6], -1.0f, 1.0f, 0.0f, playerColor);
-                    }
-                }
-                if (keys[DIK_A] && keys[DIK_D]) {
-                    if (isTurnLeft == 1) {
-                        Novice::DrawSprite(posX, posY, playerImage[6], 1.0f, 1.0f, 0.0f, playerColor);
-                    }
-                    if (isTurnRight == 1) {
-                        Novice::DrawSprite(posX + sizeX, posY, playerImage[6], -1.0f, 1.0f, 0.0f, playerColor);
-                    }
                 }
             }
            
@@ -1122,6 +1078,48 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
                 }
                 //ボスゲージ（仮置き）
                 Novice::DrawSprite(400, 100, bossGauge, 1.0f, 1.0f, 0.0f, WHITE);
+            }
+            // 自機の残像を描画（透明度を反映）
+            for (int i = 0; i < playerTrail.size(); ++i) {
+                // 透明度をアルファ値に変換（0.0～1.0 → 0x00～0xFF）
+                int alphaValue = static_cast<int>(playerTrail[i].alpha * 255.0f);
+                unsigned int colorWithAlpha = (alphaValue << 24) | 0x10e6e6fa; // 透明度を上位8ビットに設定
+                Novice::DrawSprite(static_cast<int>(playerTrail[i].x), static_cast<int>(playerTrail[i].y), playerImage[playerImageFrameCount / 12], 1, 1, 0.0f, colorWithAlpha);
+            }
+            //プレイヤーの画像描画
+            if (keys[DIK_A] && !keys[DIK_D]) {
+                playerImageFrameCount++;
+                if (playerImageFrameCount >= 60) {
+                    playerImageFrameCount = 0;
+                }
+                Novice::DrawSprite(posX, posY, playerImage[playerImageFrameCount / 12], 1.0f, 1.0f, 0.0f, playerColor);
+                isTurnLeft = true;
+                isTurnRight = false;
+            }
+            if (keys[DIK_D] && !keys[DIK_A]) {
+                playerImageFrameCount++;
+                if (playerImageFrameCount >= 60) {
+                    playerImageFrameCount = 0;
+                }
+                Novice::DrawSprite(posX + sizeX, posY, playerImage[playerImageFrameCount / 12], -1.0f, 1.0f, 0.0f, playerColor);
+                isTurnLeft = false;
+                isTurnRight = true;
+            }
+            if (!keys[DIK_A] && !keys[DIK_D]) {
+                if (isTurnLeft == 1) {
+                    Novice::DrawSprite(posX, posY, playerImage[6], 1.0f, 1.0f, 0.0f, playerColor);
+                }
+                if (isTurnRight == 1) {
+                    Novice::DrawSprite(posX + sizeX, posY, playerImage[6], -1.0f, 1.0f, 0.0f, playerColor);
+                }
+            }
+            if (keys[DIK_A] && keys[DIK_D]) {
+                if (isTurnLeft == 1) {
+                    Novice::DrawSprite(posX, posY, playerImage[6], 1.0f, 1.0f, 0.0f, playerColor);
+                }
+                if (isTurnRight == 1) {
+                    Novice::DrawSprite(posX + sizeX, posY, playerImage[6], -1.0f, 1.0f, 0.0f, playerColor);
+                }
             }
 
             //DrawBeams(startLineX, startLineY, goalLineX, goalLineY, BLACK);
