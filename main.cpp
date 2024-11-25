@@ -43,6 +43,12 @@ const int kScreenWidth = 1600;  // 画面の幅
 const int kScreenHeight = 900;  // 画面の高さ
 FireParticle blackParticles[kMaxBlackParticles]; // パーティクル配列
 
+int playerHP = 1000;
+int bossAttackCoolTime = 0;
+int bossAttackTimeFlag = false;
+int bossAttackCooldownTime = 0;
+int bossAttackDelay = 120;
+
 void InitializeBlackParticles() {
     for (int i = 0; i < kMaxBlackParticles; ++i) {
         blackParticles[i].x = static_cast<float>(rand() % kScreenWidth);
@@ -162,6 +168,34 @@ const int MAX_TRAIL_LENGTH = 10;    // 残像の長さ（過去何フレーム�
 float EaseOut(float t) {
     return t * (2.0f - t);  // tが0から1の間で滑らかに減少
 }
+// 自作の max 関数
+float my_max(float a, float b) {
+    return (a > b) ? a : b;
+}
+// 自作の min 関数（名前を変更）
+float my_min(float a, float b) {
+    return (a < b) ? a : b;
+}
+// 自機と弾の当たり判定
+bool CheckCollisionWithPlayer(float playerX, float playerY, float playerWidth, float playerHeight, float circleX, float circleY, float radius) {
+    // 自機の範囲
+    float left = playerX;
+    float right = playerX + playerWidth;
+    float top = playerY;
+    float bottom = playerY + playerHeight;
+
+    // 円の最も近い位置を求める
+    float closestX = my_max(left, my_min(circleX, right));  // my_max と my_min を使用
+    float closestY = my_max(top, my_min(circleY, bottom));
+
+    // 円の中心と最も近い点との距離を計算
+    float distanceX = circleX - closestX;
+    float distanceY = circleY - closestY;
+    float distanceSquared = distanceX * distanceX + distanceY * distanceY;
+
+    // 円と自機の距離が円の半径よりも小さければ衝突
+    return distanceSquared <= (radius * radius);
+}
 
 void LaunchCircles(float startX, float startY) {
     const int circleCount = 100;
@@ -181,7 +215,40 @@ void LaunchCircles(float startX, float startY) {
         circles.push_back(circle);
     }
 }
+// 線分と円の当たり判定
+bool CheckCollisionWithSlash(float x1, float y1, float x2, float y2, float cx, float cy, float r) {
+    // 線分のベクトル
+    float lineX = x2 - x1;
+    float lineY = y2 - y1;
 
+    // 線分の長さ
+    float lineLength = sqrt(lineX * lineX + lineY * lineY);
+
+    // 線分の単位ベクトル
+    float lineUnitX = lineX / lineLength;
+    float lineUnitY = lineY / lineLength;
+
+    // 円の中心から線分の始点へのベクトル
+    float dx = cx - x1;
+    float dy = cy - y1;
+
+    // 線分上の最も近い点を求める
+    float dot = dx * lineUnitX + dy * lineUnitY;
+    float closestX = x1 + dot * lineUnitX;
+    float closestY = y1 + dot * lineUnitY;
+
+    // 線分外の点の場合は、最近点を線分の端点に制限
+    closestX = my_max(x1, my_min(closestX, x2));
+    closestY = my_max(y1, my_min(closestY, y2));
+
+    // 最短距離を計算
+    float distanceX = cx - closestX;
+    float distanceY = cy - closestY;
+    float distanceSquared = distanceX * distanceX + distanceY * distanceY;
+
+    // 距離が半径より小さい場合、衝突
+    return distanceSquared <= (r * r);
+}
 //void DrawLightningLine(int startX, int startY, int endX, int endY, unsigned int color) {
 //    const int segments = 400;  // 分割するセグメント数
 //    const int maxOffset = 40;  // セグメントごとの最大オフセット値
@@ -225,7 +292,7 @@ bool CheckCollision(float leftTopX, float leftTopY, float rightTopX, float right
 }
 
 int bossColor = WHITE;
-int bossHP = 20;
+int bossHP = 50;
 void DrawSlash(int startX, int startY, int targetX, int targetY, unsigned int color, float length, int bossPosX, int bossPosY, int bossSizeX, int bossSizeY) {
     const float width = 130.0f;
 
@@ -287,11 +354,7 @@ void CheckEnemyAttackRangeAndExecute(int playerX, int playerY, int enemyX, int e
         DrawSlash(enemyX, enemyY, playerX, playerY, RED, 200, enemyX, enemyY, enemySizeX, enemySizeY);
     }
 }
-int playerHP = 1000;
-int bossAttackCoolTime = 0;
-int bossAttackTimeFlag = false;
-int bossAttackCooldownTime = 0;
-int bossAttackDelay = 120;
+
 //敵の近接攻撃
 void ExecuteCloseRangeAttack(int playerPosX, int playerPosY, int playerSizeX, int playerSizeY, int bossPosX, int bossPosY, int bossSizeX, int bossSizeY) {
     // プレイヤーの中心座標を計算
@@ -379,7 +442,7 @@ void MoveBullets(int playerPosY, int playerPosX, int playerSizeX, int playerSize
             if (bulletActive[i] == true) {
                 bulletTimer[i]++;
             }
-            if (bulletTimer[i] >= 300) {
+            if (bulletTimer[i] >= 200) {
                 bulletActive[i] = false;
                 bulletTimer[i] = 0;
             }
@@ -485,6 +548,8 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
     int beamSize = 75;
     int beamTimer[3] = { 0 };
 
+    int circleTimer = 0;
+   
     // ウィンドウの×ボタンが押されるまでループ
     while (Novice::ProcessMessage() == 0) {
         // フレームの開始
@@ -550,17 +615,19 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
             }
 
             // ENTERキーが押された時の処理
-            if (preKeys[DIK_RETURN] == 0 && keys[DIK_RETURN] != 0) {
-                // 最初の発射
-                LaunchCircles(static_cast<float>(bossPosX) + bossSizeX / 2, static_cast<float>(bossPosY) + bossSizeY / 2);
-                bossCircularAttackFlag = true;
-                bossCircularAttackTimer = 0; // タイマーリセット
-                isFirstLaunch = false; // 初回発射フラグを無効にする
+            if (bossHP <= 20) {
+                if (isFirstLaunch) {
+                    // 最初の発射
+                    LaunchCircles(static_cast<float>(bossPosX) + bossSizeX / 2, static_cast<float>(bossPosY) + bossSizeY / 2);
+                    bossCircularAttackFlag = true;
+                    bossCircularAttackTimer = 0; // タイマーリセット
+                    isFirstLaunch = false; // 初回発射フラグを無効にする
+                }
             }
 
             if (bossCircularAttackFlag == true) {
                 bossCircularAttackTimer++; // タイマー進行
-
+                circleTimer++;
                 // 最初に弾を発射してから10秒経過したら再度発射
                 if (bossCircularAttackTimer >= bossCircularAttackCooldown) {
                     LaunchCircles(static_cast<float>(bossPosX) + bossSizeX / 2, static_cast<float>(bossPosY) + bossSizeY / 2);
@@ -568,7 +635,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
                 }
             }
 
-            if (bossCircularAttackTimer >= 1400) { // 1400フレーム後に攻撃を終了
+            if (bossCircularAttackTimer >= 1400) { // 1200フレーム後に攻撃を終了
                 bossCircularAttackFlag = false;
                 bossCircularAttackTimer = 0;
             }
@@ -578,6 +645,10 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
                 if (circle.active) {
                     circle.x += circle.vx;
                     circle.y += circle.vy;
+                    if (circleTimer > 7) {
+                        circle.active = false;
+                        circleTimer = 0;
+                    }
 
                     // ウィンドウ外に出たら非アクティブにする
                     if (circle.x < 0 || circle.x > GetSystemMetrics(SM_CXSCREEN) || circle.y < 0 || circle.y > GetSystemMetrics(SM_CYSCREEN)) {
@@ -586,10 +657,21 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
                 }
             }
 
+            // 円のパラメータ
+            for (auto& circle : circles) {
+                if (circle.active) {
+                    // 円が自機と衝突したか判定
+                    if (CheckCollisionWithPlayer((float)posX, (float)posY, sizeX, sizeY, circle.x, circle.y, circle.radius)) {
+                        playerHP -= 10; // 衝突した場合のダメージ
+                        circle.active = false; // 衝突したら弾は消す
+                        playerColor = RED; // 自機がダメージを受けたら色を変える
+                    }
+                }
+            }
             // クールダウンのタイマーを更新
             bossBeamCooldown++;
 
-            if (bossBeamCooldown > 200) {
+            if (bossBeamCooldown > 600) {
                 // 600フレーム経過したら、ランダムでビームを選択
                 randomBeamIndex = rand() % 3;  // 0から6の間でランダムに選択
                 bossBeamCooldown = 0; // クールダウンリセット
@@ -702,7 +784,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
             if (bossAttackTimeFlag) {
                 bossAttackCoolTime++;
             }
-            if (bossAttackCoolTime > 120) {
+            if (bossAttackCoolTime > 140) {
                 bossAttackTimeFlag = false;
                 bossAttackCoolTime = 0;
             }
@@ -867,12 +949,11 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
             // 飛んでいる円を描画
             for (const auto& circle : circles) {
                 if (circle.active) {
-                    Novice::DrawEllipse(static_cast<int>(circle.x),
-                        static_cast<int>(circle.y), 16, 16, 0.0f, BLACK, kFillModeSolid);
                     Novice::DrawSprite(static_cast<int>(circle.x) - 16,
                         static_cast<int>(circle.y) - 16, blackBall, 1,1,.0f,WHITE);
                 }
             }
+
             // 敵のホーミング弾の描画
             for (int i = 0; i < numOfBullets; ++i) {
                 if (bulletActive[i]) {
@@ -1041,6 +1122,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
             Novice::ScreenPrintf(20, 100, "beamTimer : %d",bossBeamCooldown);
             Novice::ScreenPrintf(20, 60, "%d", bossAttackCoolTime);
             Novice::ScreenPrintf(20, 80, "%d", bossImageChange);
+            Novice::ScreenPrintf(20, 120, "%d", bossCircularAttackTimer);
             break;
         case GAME_CLEAR:
             break;
