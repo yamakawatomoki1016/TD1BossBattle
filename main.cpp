@@ -515,6 +515,12 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
         Novice::LoadTexture("./Resources/move6.png"),
         Novice::LoadTexture("./Resources/move0.png"),
     };
+    int bossImage[4] = {
+        Novice::LoadTexture("./Resources/move1.png"),
+        Novice::LoadTexture("./Resources/move2.png"),
+        Novice::LoadTexture("./Resources/move3.png"),
+        Novice::LoadTexture("./Resources/move4.png"),
+    }
     int bossImage = Novice::LoadTexture("./Resources/darkPhenix01.png");
     int catBossImage = Novice::LoadTexture("./Resources/bossCatAttack01.png");
     int bossGauge = Novice::LoadTexture("./Resources/bossgauge.png");
