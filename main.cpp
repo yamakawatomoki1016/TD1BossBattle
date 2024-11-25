@@ -147,6 +147,7 @@ int posY = groundHeight - 120;
 const int sizeX = 100;
 const int sizeY = 120;
 const int playerSpeed = 10;
+int playerColor = WHITE;
 
 // 残像の履歴を保存する構造体
 struct Position {
@@ -271,6 +272,7 @@ bool CheckBeamCollisionWithPlayer(int playerX, int playerY, int playerWidth, int
     // ビームが自機の矩形領域内にあるかチェック
     if ((beamStartX >= playerLeft && beamStartX <= playerRight && beamStartY >= playerTop && beamStartY <= playerBottom) ||
         (beamEndX >= playerLeft && beamEndX <= playerRight && beamEndY >= playerTop && beamEndY <= playerBottom)) {
+        playerColor = RED;
         return true;  // 衝突した
     }
     return false;  // 衝突しなかった
@@ -310,6 +312,7 @@ void ExecuteCloseRangeAttack(int playerPosX, int playerPosY, int playerSizeX, in
                 if (playerPosX + playerSizeX >= bossCenterX - bossSizeX / 2 - 70 && playerPosX <= bossCenterX - bossSizeX / 2 - 70 + 70) {
                     if (playerPosY + playerSizeY >= bossCenterY - bossSizeY / 2 && playerPosY <= bossCenterY + bossSizeY / 2) {
                         playerHP -= 10; // ダメージ処理
+                        playerColor = RED;
                     }
                 }
             }
@@ -320,6 +323,7 @@ void ExecuteCloseRangeAttack(int playerPosX, int playerPosY, int playerSizeX, in
                 if (playerPosX + playerSizeX >= bossCenterX + bossSizeX / 2 + 10 && playerPosX <= bossCenterX + bossSizeX / 2 + 10 + 70) {
                     if (playerPosY + playerSizeY >= bossCenterY - bossSizeY / 2 && playerPosY <= bossCenterY + bossSizeY / 2) {
                         playerHP -= 10; // ダメージ処理
+                        playerColor = RED;
                     }
                 }
             }
@@ -367,6 +371,7 @@ void MoveBullets(int playerPosY, int playerPosX, int playerSizeX, int playerSize
             if (bulletPosX[i] > playerPosX && bulletPosX[i] < playerPosX + playerSizeX &&
                 bulletPosY[i] > playerPosY && bulletPosY[i] < playerPosY + playerSizeY) {
                 playerHP -= 100; // 自機のHPを減少
+                playerColor = RED;
                 bulletActive[i] = false; // 弾を消す
                 bulletTimer[i] = 0;
             }
@@ -400,15 +405,15 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
     bool xBeamFlag2 = false;
     bool yBeamFlag = false;
 
-    int startLineX[7] = { 50, 50, 1490, 1490, 200, 750, 1350 };
-    int startLineY[7] = { 250, 650, 250, 650, 50, 50, 50 };
-    int goalLineX[7] = { 50, 50, 1490, 1490, 200, 750, 1350 };
-    int goalLineY[7] = { 250, 650, 250, 650, 50, 50, 50 };
+    int startLineX[7] = { -50, -50, 1650, 1650, 200, 750, 1350 };
+    int startLineY[7] = { 270, 800, 270, 800, -50, -50, -50 };
+    int goalLineX[7] = { -50, -50, 1540, 1540, 200, 750, 1350 };
+    int goalLineY[7] = { 270, 800, 270, 800, -50, -50, -50 };
 
-    const int initialStartLineX[7] = { 50, 50, 1490, 1490, 200, 750, 1350 };
-    const int initialStartLineY[7] = { 250, 650, 250, 650, 50, 50, 50 };
-    const int initialGoalLineX[7] = { 50, 50, 1490, 1490, 200, 750, 1350 };
-    const int initialGoalLineY[7] = { 250, 650, 250, 650, 50, 50, 50 };
+    const int initialStartLineX[7] = { -50, -50, 1650, 1650, 200, 750, 1350 };
+    const int initialStartLineY[7] = { 270, 800, 270, 800, -50, -50, -50 };
+    const int initialGoalLineX[7] = { -50, -50, 1540, 1540, 200, 750, 1350 };
+    const int initialGoalLineY[7] = { 270, 800, 270, 800, -50, -50, -50 };
     int bossBeamCooldown = 0; // ビームのクールダウンタイマー
     int randomBeamIndex = -1; // 発射するビームのインデックス
     bool xBeamFlagInProgress = false;  // x方向ビームの進行状態
@@ -463,7 +468,6 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
     int playerImageFrameCount = 0;
     int isTurnLeft = false;
     int isTurnRight = true;
-    int playerColor = WHITE;
 
     int bossImageChange = false;
     // ジャンプ関連の変数
@@ -472,6 +476,11 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
     const int gravity = 2; // 重力加速度
     const int jumpPower = 35; // ジャンプの初速度
     InitializeBlackParticles();
+
+    int beamPosX[7] = { 50, 50, 1550, 1550, 200, 750, 1350 };
+    int beamPosY[7] = { 270, 800, 270, 800, 50, 50, 50 };
+    int beamSize = 75;
+    int beamTimer[3] = { 0 };
 
     // ウィンドウの×ボタンが押されるまでループ
     while (Novice::ProcessMessage() == 0) {
@@ -577,7 +586,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
             // クールダウンのタイマーを更新
             bossBeamCooldown++;
 
-            if (bossBeamCooldown > 600) {
+            if (bossBeamCooldown > 200) {
                 // 600フレーム経過したら、ランダムでビームを選択
                 randomBeamIndex = rand() % 3;  // 0から6の間でランダムに選択
                 bossBeamCooldown = 0; // クールダウンリセット
@@ -603,63 +612,80 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
                 }
             }
 
-            // ビームの進行処理
             if (xBeamFlag) {
+                beamTimer[0]++;
+            }
+            if (xBeamFlag2) {
+                beamTimer[1]++;
+            }
+            if (yBeamFlag) {
+                beamTimer[2]++;
+            }
+
+            // ビームの進行処理
+            if (xBeamFlag && beamTimer[0] > 60) {
                 goalLineX[0] += 40; goalLineX[1] += 40;
             }
             // ビームの進行処理
-            if (xBeamFlag2) {
+            if (xBeamFlag2 && beamTimer[1] > 60) {
                 goalLineX[2] -= 40; goalLineX[3] -= 40;
             }
-            if (yBeamFlag) {
+            if (yBeamFlag && beamTimer[2] > 60) {
                 goalLineY[4] += 40;
                 goalLineY[5] += 40;
                 goalLineY[6] += 40;
             }
 
             // 端の位置制限
-            if (goalLineX[0] >= 1400) { goalLineX[0] = 1600; startLineX[0] += 50; }
-            if (goalLineX[1] >= 1400) { goalLineX[1] = 1600; startLineX[1] += 50; }
-            if (goalLineX[2] <= 80) { goalLineX[2] = -120; startLineX[2] -= 50; }
-            if (goalLineX[3] <= 80) { goalLineX[3] = -120; startLineX[3] -= 50; }
-            if (goalLineY[4] >= 740) { goalLineY[4] = 940; startLineY[4] += 50; }
-            if (goalLineY[5] >= 740) { goalLineY[5] = 940; startLineY[5] += 50; }
-            if (goalLineY[6] >= 740) { goalLineY[6] = 940; startLineY[6] += 50; }
+            if (goalLineX[0] >= 800) { goalLineX[0] = 1600; startLineX[0] += 50; }
+            if (goalLineX[1] >= 800) { goalLineX[1] = 1600; startLineX[1] += 50; }
+            if (goalLineX[2] <= 600) { goalLineX[2] = -120; startLineX[2] -= 50; }
+            if (goalLineX[3] <= 600) { goalLineX[3] = -120; startLineX[3] -= 50; }
+            if (goalLineY[4] >= 700) { goalLineY[4] = 940; startLineY[4] += 50; }
+            if (goalLineY[5] >= 700) { goalLineY[5] = 940; startLineY[5] += 50; }
+            if (goalLineY[6] >= 700) { goalLineY[6] = 940; startLineY[6] += 50; }
 
             if (startLineX[0] >= 1400) {
                 startLineX[0] = 1400;
                 xBeamFlagInProgress = true;
                 randomBeamIndex = -1;
+                beamTimer[0] = 0;
             }
             if (startLineX[1] >= 1400) {
                 startLineX[1] = 1400;
                 xBeamFlagInProgress = true;
                 randomBeamIndex = -1;
+                beamTimer[0] = 0;
             }
             if (startLineX[2] <= 80) {
                 startLineX[2] = 80;
                 xBeamFlag2InProgress = true;
                 randomBeamIndex = -1;
+                beamTimer[1] = 0;
             }
             if (startLineX[3] <= 80) {
                 startLineX[3] = 80;
                 xBeamFlag2InProgress = true;
                 randomBeamIndex = -1;
+                beamTimer[1] = 0;
             }
             if (startLineY[4] >= 740) {
                 startLineY[4] = 740;
                 yBeamFlagInProgress = true;
                 randomBeamIndex = -1;
+                beamTimer[2] = 0;
             }
             if (startLineY[5] >= 740) {
                 startLineY[5] = 740;
                 yBeamFlagInProgress = true;
                 randomBeamIndex = -1;
+                beamTimer[2] = 0;
             }
             if (startLineY[6] >= 740) {
                 startLineY[6] = 740;
                 yBeamFlagInProgress = true;
                 randomBeamIndex = -1;
+                beamTimer[2] = 0;
             }
             // パーティクル生成
             if (rand() % 5 == 0) { // 毎フレームではなく間引いて生成
@@ -692,8 +718,8 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
             bossTeleportTimer++;
             if (bossTeleportTimer > 600 + randTimer) {
-                bossPosX = rand() % (1600 - 200);  // ボスの幅200を考慮して位置を決定
-                bossPosY = rand() % (900 - 200); // ボスの高さ200を考慮して位置を決定
+                bossPosX = rand() % (1200 - 300);  // ボスの幅200を考慮して位置を決定
+                bossPosY = rand() % (500 - 250); // ボスの高さ200を考慮して位置を決定
                 randTimer = rand() % (1000 - 100);
                 bossTeleportTimer = 0;
             }
@@ -795,47 +821,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
             DrawBlackParticles();
             // 地面の描画
             Novice::DrawBox(0, 600, 1600, 200, 0.0f, 0xb8860b, kFillModeSolid);
-            // 自機の残像を描画（透明度を適用）
-            for (int i = 0; i < playerTrail.size(); ++i) {
-                Novice::DrawBox((int)playerTrail[i].x, (int)playerTrail[i].y, sizeX, sizeY, 0.0f, 0x98fb98, kFillModeSolid);
-            }
-            //自機
-            // Novice::DrawBox(posX, posY, sizeX, sizeY, 0.0f, GREEN, kFillModeSolid);
-            //プレイヤーの画像描画
-            if (keys[DIK_A] && !keys[DIK_D]) {
-                playerImageFrameCount++;
-                if (playerImageFrameCount >= 60) {
-                    playerImageFrameCount = 0;
-                }
-                Novice::DrawSprite(posX, posY, playerImage[playerImageFrameCount / 12], 1.0f, 1.0f, 0.0f, playerColor);
-                isTurnLeft = true;
-                isTurnRight = false;
-            }
-            if (keys[DIK_D] && !keys[DIK_A]) {
-                playerImageFrameCount++;
-                if (playerImageFrameCount >= 60) {
-                    playerImageFrameCount = 0;
-                }
-                Novice::DrawSprite(posX + sizeX, posY, playerImage[playerImageFrameCount / 12], -1.0f, 1.0f, 0.0f, playerColor);
-                isTurnLeft = false;
-                isTurnRight = true;
-            }
-            if (!keys[DIK_A] && !keys[DIK_D]) {
-                if (isTurnLeft == 1) {
-                    Novice::DrawSprite(posX, posY, playerImage[6], 1.0f, 1.0f, 0.0f, playerColor);
-                }       
-                if (isTurnRight == 1) {
-                    Novice::DrawSprite(posX + sizeX, posY, playerImage[6], -1.0f, 1.0f, 0.0f, playerColor);
-                }
-            }
-            if (keys[DIK_A] && keys[DIK_D]) {
-                if (isTurnLeft == 1) {
-                    Novice::DrawSprite(posX, posY, playerImage[6], 1.0f, 1.0f, 0.0f, playerColor);
-                }
-                if (isTurnRight == 1) {
-                    Novice::DrawSprite(posX + sizeX, posY, playerImage[6], -1.0f, 1.0f, 0.0f, playerColor);
-                }
-            }
+            
             //プレイヤーのHPゲージ(仮置き)
             Novice::DrawSprite(100, 750, playerGauge, 1.0f, 1.0f, 0.0f, WHITE);
 
@@ -890,6 +876,19 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
                     Novice::DrawEllipse(int(bulletPosX[i]), int(bulletPosY[i]), 20, 20, 0.0f, RED, kFillModeSolid); // 弾の描画
                 }
             }
+            if (xBeamFlag && beamTimer[0] < 60) {
+                Novice::DrawBox(beamPosX[0], beamPosY[0], beamSize, beamSize, 0.0f, RED, kFillModeSolid);
+                Novice::DrawBox(beamPosX[1], beamPosY[1], beamSize, beamSize, 0.0f, RED, kFillModeSolid);
+            }
+            if (xBeamFlag2 && beamTimer[1] < 60) {
+                Novice::DrawBox(beamPosX[2] - beamSize - beamSize, beamPosY[2] - beamSize / 2, beamSize, beamSize, 0.0f, RED, kFillModeSolid);
+                Novice::DrawBox(beamPosX[3] - beamSize - beamSize, beamPosY[3] - beamSize / 2, beamSize, beamSize, 0.0f, RED, kFillModeSolid);
+            }
+            if (yBeamFlag && beamTimer[2] < 60) {
+                Novice::DrawBox(beamPosX[4] - beamSize / 2, beamPosY[4], beamSize, beamSize, 0.0f, RED, kFillModeSolid);
+                Novice::DrawBox(beamPosX[5] - beamSize / 2, beamPosY[5], beamSize, beamSize, 0.0f, RED, kFillModeSolid);
+                Novice::DrawBox(beamPosX[6] - beamSize / 2, beamPosY[6], beamSize, beamSize, 0.0f, RED, kFillModeSolid);
+            }
             for (int i = 0; i < 7; ++i) {
                 // ボックスの中心位置を設定
                 boxPosX[i] = startLineX[i] - boxSizeX[i] / 2;
@@ -904,7 +903,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
                 float rightBottomX = static_cast<float>(boxPosX[i]) + static_cast<float>(boxSizeX[i]);
                 float rightBottomY = static_cast<float>(boxPosY[i]) + static_cast<float>(boxSizeY[i]);
 
-                if (xBeamFlag == true && i == 0) {
+                if (xBeamFlag == true && i == 0 && beamTimer[0] > 60) {
                     // スピードをフレームごとに増加させる
                     rightTopX += beamSpeed[0];
                     rightBottomX += beamSpeed[0];
@@ -912,7 +911,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
                     //スピードを増加
                     beamSpeed[0] += 40.0f;  // 速度を増加させる（増加する量は調整可能）
                 }
-                if (xBeamFlag == true && i == 1) {
+                if (xBeamFlag == true && i == 1 && beamTimer[0] > 60) {
                     // スピードをフレームごとに増加させる
                     rightTopX += beamSpeed[1];
                     rightBottomX += beamSpeed[1];
@@ -920,7 +919,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
                     //スピードを増加
                     beamSpeed[1] += 40.0f;  // 速度を増加させる（増加する量は調整可能）
                 }
-                if (xBeamFlag2 == true && i == 2) {
+                if (xBeamFlag2 == true && i == 2 && beamTimer[1] > 60) {
                     // スピードをフレームごとに増加させる
                     leftTopX += beamSpeed[2];
                     leftBottomX += beamSpeed[2];
@@ -928,7 +927,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
                     //スピードを増加
                     beamSpeed[2] -= 40.0f;  // 速度を増加させる（増加する量は調整可能）
                 }
-                if (xBeamFlag2 == true && i == 3) {
+                if (xBeamFlag2 == true && i == 3 && beamTimer[1] > 60) {
                     // スピードをフレームごとに増加させる
                     leftTopX += beamSpeed[3];
                     leftBottomX += beamSpeed[3];
@@ -936,7 +935,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
                     //スピードを増加
                     beamSpeed[3] -= 40.0f;  // 速度を増加させる（増加する量は調整可能）
                 }
-                if (yBeamFlag == true && i == 4) {
+                if (yBeamFlag == true && i == 4 && beamTimer[2] > 60) {
                     // スピードをフレームごとに増加させる
                     rightBottomY += beamSpeed[4];
                     leftBottomY += beamSpeed[4];
@@ -944,7 +943,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
                     //スピードを増加
                     beamSpeed[4] += 40.0f;  // 速度を増加させる（増加する量は調整可能）
                 }
-                if (yBeamFlag == true && i == 5) {
+                if (yBeamFlag == true && i == 5 && beamTimer[2] > 60) {
                     // スピードをフレームごとに増加させる
                     rightBottomY += beamSpeed[5];
                     leftBottomY += beamSpeed[5];
@@ -952,7 +951,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
                     //スピードを増加
                     beamSpeed[5] += 40.0f;  // 速度を増加させる（増加する量は調整可能）
                 }
-                if (yBeamFlag == true && i == 6) {
+                if (yBeamFlag == true && i == 6 && beamTimer[2] > 60) {
                     // スピードをフレームごとに増加させる
                     rightBottomY += beamSpeed[6];
                     leftBottomY += beamSpeed[6];
@@ -974,10 +973,51 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
             bossColor = WHITE;
 
+            // 自機の残像を描画（透明度を適用）
+            for (int i = 0; i < playerTrail.size(); ++i) {
+                Novice::DrawBox((int)playerTrail[i].x, (int)playerTrail[i].y, sizeX, sizeY, 0.0f, 0x98fb98, kFillModeSolid);
+            }
+
             //自機の攻撃
             if (Novice::IsTriggerMouse(0)) {
                 DrawSlash(posX + sizeX / 2, posY + sizeY / 2, mouseX, mouseY, WHITE, 60.0f, bossPosX, bossPosY, bossSizeX, bossSizeY);
                 Novice::PlayAudio(slashSounds, 0, 0.5f);
+            }
+
+            //プレイヤーの画像描画
+            if (keys[DIK_A] && !keys[DIK_D]) {
+                playerImageFrameCount++;
+                if (playerImageFrameCount >= 60) {
+                    playerImageFrameCount = 0;
+                }
+                Novice::DrawSprite(posX, posY, playerImage[playerImageFrameCount / 12], 1.0f, 1.0f, 0.0f, playerColor);
+                isTurnLeft = true;
+                isTurnRight = false;
+            }
+            if (keys[DIK_D] && !keys[DIK_A]) {
+                playerImageFrameCount++;
+                if (playerImageFrameCount >= 60) {
+                    playerImageFrameCount = 0;
+                }
+                Novice::DrawSprite(posX + sizeX, posY, playerImage[playerImageFrameCount / 12], -1.0f, 1.0f, 0.0f, playerColor);
+                isTurnLeft = false;
+                isTurnRight = true;
+            }
+            if (!keys[DIK_A] && !keys[DIK_D]) {
+                if (isTurnLeft == 1) {
+                    Novice::DrawSprite(posX, posY, playerImage[6], 1.0f, 1.0f, 0.0f, playerColor);
+                }
+                if (isTurnRight == 1) {
+                    Novice::DrawSprite(posX + sizeX, posY, playerImage[6], -1.0f, 1.0f, 0.0f, playerColor);
+                }
+            }
+            if (keys[DIK_A] && keys[DIK_D]) {
+                if (isTurnLeft == 1) {
+                    Novice::DrawSprite(posX, posY, playerImage[6], 1.0f, 1.0f, 0.0f, playerColor);
+                }
+                if (isTurnRight == 1) {
+                    Novice::DrawSprite(posX + sizeX, posY, playerImage[6], -1.0f, 1.0f, 0.0f, playerColor);
+                }
             }
 
             Novice::ScreenPrintf(20, 20, "bossHP : %d", bossHP);
