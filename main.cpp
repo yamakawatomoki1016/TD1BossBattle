@@ -350,6 +350,8 @@ void ShootBullets(int bossPosX, int bossPosY, int playerPosX, int playerPosY, in
             }
         }
         bulletCooldown = 600; //クールタイム
+        int homingBulletSounds = Novice::LoadAudio("./Resources/maou_se_sound03.mp3");
+        Novice::PlayAudio(homingBulletSounds, 0, 0.5);
     }
 }
 // 弾の移動処理内
@@ -453,6 +455,10 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
     //int slash = Novice::LoadTexture("./Resources/slash.png");
     int title = Novice::LoadTexture("./Resources/title.png");
     int gameover = Novice::LoadTexture("./Resources/zannnenn.png");
+
+    //音の読み込み
+    //int homingBulletSounds = Novice::LoadAudio("./Resources/maou_se_sound03.mp3");
+    int slashSounds = Novice::LoadAudio("./Resources/maou_se_battle03.mp3");
 
     int playerImageFrameCount = 0;
     int isTurnLeft = false;
@@ -971,6 +977,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
             //自機の攻撃
             if (Novice::IsTriggerMouse(0)) {
                 DrawSlash(posX + sizeX / 2, posY + sizeY / 2, mouseX, mouseY, WHITE, 60.0f, bossPosX, bossPosY, bossSizeX, bossSizeY);
+                Novice::PlayAudio(slashSounds, 0, 0.5f);
             }
 
             Novice::ScreenPrintf(20, 20, "bossHP : %d", bossHP);
