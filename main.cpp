@@ -815,47 +815,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
             DrawBlackParticles();
             // 地面の描画
             Novice::DrawBox(0, 600, 1600, 200, 0.0f, 0xb8860b, kFillModeSolid);
-            // 自機の残像を描画（透明度を適用）
-            for (int i = 0; i < playerTrail.size(); ++i) {
-                Novice::DrawBox((int)playerTrail[i].x, (int)playerTrail[i].y, sizeX, sizeY, 0.0f, 0x98fb98, kFillModeSolid);
-            }
-            //自機
-            // Novice::DrawBox(posX, posY, sizeX, sizeY, 0.0f, GREEN, kFillModeSolid);
-            //プレイヤーの画像描画
-            if (keys[DIK_A] && !keys[DIK_D]) {
-                playerImageFrameCount++;
-                if (playerImageFrameCount >= 60) {
-                    playerImageFrameCount = 0;
-                }
-                Novice::DrawSprite(posX, posY, playerImage[playerImageFrameCount / 12], 1.0f, 1.0f, 0.0f, playerColor);
-                isTurnLeft = true;
-                isTurnRight = false;
-            }
-            if (keys[DIK_D] && !keys[DIK_A]) {
-                playerImageFrameCount++;
-                if (playerImageFrameCount >= 60) {
-                    playerImageFrameCount = 0;
-                }
-                Novice::DrawSprite(posX + sizeX, posY, playerImage[playerImageFrameCount / 12], -1.0f, 1.0f, 0.0f, playerColor);
-                isTurnLeft = false;
-                isTurnRight = true;
-            }
-            if (!keys[DIK_A] && !keys[DIK_D]) {
-                if (isTurnLeft == 1) {
-                    Novice::DrawSprite(posX, posY, playerImage[6], 1.0f, 1.0f, 0.0f, playerColor);
-                }       
-                if (isTurnRight == 1) {
-                    Novice::DrawSprite(posX + sizeX, posY, playerImage[6], -1.0f, 1.0f, 0.0f, playerColor);
-                }
-            }
-            if (keys[DIK_A] && keys[DIK_D]) {
-                if (isTurnLeft == 1) {
-                    Novice::DrawSprite(posX, posY, playerImage[6], 1.0f, 1.0f, 0.0f, playerColor);
-                }
-                if (isTurnRight == 1) {
-                    Novice::DrawSprite(posX + sizeX, posY, playerImage[6], -1.0f, 1.0f, 0.0f, playerColor);
-                }
-            }
+            
             //プレイヤーのHPゲージ(仮置き)
             Novice::DrawSprite(100, 750, playerGauge, 1.0f, 1.0f, 0.0f, WHITE);
 
@@ -909,6 +869,19 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
                 if (bulletActive[i]) {
                     Novice::DrawEllipse(int(bulletPosX[i]), int(bulletPosY[i]), 20, 20, 0.0f, RED, kFillModeSolid); // 弾の描画
                 }
+            }
+            if (xBeamFlag && beamTimer[0] < 60) {
+                Novice::DrawBox(beamPosX[0], beamPosY[0], beamSize, beamSize, 0.0f, RED, kFillModeSolid);
+                Novice::DrawBox(beamPosX[1], beamPosY[1], beamSize, beamSize, 0.0f, RED, kFillModeSolid);
+            }
+            if (xBeamFlag2 && beamTimer[1] < 60) {
+                Novice::DrawBox(beamPosX[2] - beamSize - beamSize, beamPosY[2] - beamSize / 2, beamSize, beamSize, 0.0f, RED, kFillModeSolid);
+                Novice::DrawBox(beamPosX[3] - beamSize - beamSize, beamPosY[3] - beamSize / 2, beamSize, beamSize, 0.0f, RED, kFillModeSolid);
+            }
+            if (yBeamFlag && beamTimer[2] < 60) {
+                Novice::DrawBox(beamPosX[4] - beamSize / 2, beamPosY[4], beamSize, beamSize, 0.0f, RED, kFillModeSolid);
+                Novice::DrawBox(beamPosX[5] - beamSize / 2, beamPosY[5], beamSize, beamSize, 0.0f, RED, kFillModeSolid);
+                Novice::DrawBox(beamPosX[6] - beamSize / 2, beamPosY[6], beamSize, beamSize, 0.0f, RED, kFillModeSolid);
             }
             for (int i = 0; i < 7; ++i) {
                 // ボックスの中心位置を設定
@@ -994,23 +967,50 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
             bossColor = WHITE;
 
+            // 自機の残像を描画（透明度を適用）
+            for (int i = 0; i < playerTrail.size(); ++i) {
+                Novice::DrawBox((int)playerTrail[i].x, (int)playerTrail[i].y, sizeX, sizeY, 0.0f, 0x98fb98, kFillModeSolid);
+            }
+
             //自機の攻撃
             if (Novice::IsTriggerMouse(0)) {
                 DrawSlash(posX + sizeX / 2, posY + sizeY / 2, mouseX, mouseY, WHITE, 60.0f, bossPosX, bossPosY, bossSizeX, bossSizeY);
             }
 
-            if (xBeamFlag && beamTimer[0] < 60) {
-                Novice::DrawBox(beamPosX[0], beamPosY[0], beamSize, beamSize, 0.0f, RED, kFillModeSolid);
-                Novice::DrawBox(beamPosX[1], beamPosY[1], beamSize, beamSize, 0.0f, RED, kFillModeSolid);
+            //プレイヤーの画像描画
+            if (keys[DIK_A] && !keys[DIK_D]) {
+                playerImageFrameCount++;
+                if (playerImageFrameCount >= 60) {
+                    playerImageFrameCount = 0;
+                }
+                Novice::DrawSprite(posX, posY, playerImage[playerImageFrameCount / 12], 1.0f, 1.0f, 0.0f, playerColor);
+                isTurnLeft = true;
+                isTurnRight = false;
             }
-            if (xBeamFlag2 && beamTimer[1] < 60) {
-                Novice::DrawBox(beamPosX[2] - beamSize - beamSize, beamPosY[2] - beamSize / 2, beamSize, beamSize, 0.0f, RED, kFillModeSolid);
-                Novice::DrawBox(beamPosX[3] - beamSize - beamSize, beamPosY[3] - beamSize / 2, beamSize, beamSize, 0.0f, RED, kFillModeSolid);
+            if (keys[DIK_D] && !keys[DIK_A]) {
+                playerImageFrameCount++;
+                if (playerImageFrameCount >= 60) {
+                    playerImageFrameCount = 0;
+                }
+                Novice::DrawSprite(posX + sizeX, posY, playerImage[playerImageFrameCount / 12], -1.0f, 1.0f, 0.0f, playerColor);
+                isTurnLeft = false;
+                isTurnRight = true;
             }
-            if (yBeamFlag && beamTimer[2] < 60) {
-                Novice::DrawBox(beamPosX[4] - beamSize / 2, beamPosY[4], beamSize, beamSize, 0.0f, RED, kFillModeSolid);
-                Novice::DrawBox(beamPosX[5] - beamSize / 2, beamPosY[5], beamSize, beamSize, 0.0f, RED, kFillModeSolid);
-                Novice::DrawBox(beamPosX[6] - beamSize / 2, beamPosY[6], beamSize, beamSize, 0.0f, RED, kFillModeSolid);
+            if (!keys[DIK_A] && !keys[DIK_D]) {
+                if (isTurnLeft == 1) {
+                    Novice::DrawSprite(posX, posY, playerImage[6], 1.0f, 1.0f, 0.0f, playerColor);
+                }
+                if (isTurnRight == 1) {
+                    Novice::DrawSprite(posX + sizeX, posY, playerImage[6], -1.0f, 1.0f, 0.0f, playerColor);
+                }
+            }
+            if (keys[DIK_A] && keys[DIK_D]) {
+                if (isTurnLeft == 1) {
+                    Novice::DrawSprite(posX, posY, playerImage[6], 1.0f, 1.0f, 0.0f, playerColor);
+                }
+                if (isTurnRight == 1) {
+                    Novice::DrawSprite(posX + sizeX, posY, playerImage[6], -1.0f, 1.0f, 0.0f, playerColor);
+                }
             }
 
             Novice::ScreenPrintf(20, 20, "bossHP : %d", bossHP);
