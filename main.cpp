@@ -809,16 +809,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
                 isTurnLeft = false;
                 isTurnRight = true;
             }
-            if (keys[DIK_D] && keys[DIK_A]) {
-                playerImageFrameCount++;
-                if (playerImageFrameCount >= 60) {
-                    playerImageFrameCount = 0;
-                }
-                Novice::DrawSprite(posX + sizeX, posY, playerImage[playerImageFrameCount / 12], -1.0f, 1.0f, 0.0f, playerColor);
-                isTurnLeft = false;
-                isTurnRight = true;
-            }
-            if (!keys[DIK_A] && !keys[DIK_D] && !keys[DIK_W] && !keys[DIK_S]) {
+            if (!keys[DIK_A] && !keys[DIK_D]) {
                 if (isTurnLeft == 1) {
                     Novice::DrawSprite(posX, posY, playerImage[6], 1.0f, 1.0f, 0.0f, playerColor);
                 }       
@@ -826,19 +817,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
                     Novice::DrawSprite(posX + sizeX, posY, playerImage[6], -1.0f, 1.0f, 0.0f, playerColor);
                 }
             }
-            if (keys[DIK_A] && keys[DIK_D] && keys[DIK_W] && keys[DIK_S]) {
-                Novice::DrawSprite(posX, posY, playerImage[6], 1.0f, 1.0f, 0.0f, playerColor);
-            }
-            //上下移動の時も歩くようにする
-            if (keys[DIK_W]) {
-                if (isTurnLeft == 1) {
-                    Novice::DrawSprite(posX, posY, playerImage[6], 1.0f, 1.0f, 0.0f, playerColor);
-                }
-                if (isTurnRight == 1) {
-                    Novice::DrawSprite(posX + sizeX, posY, playerImage[6], -1.0f, 1.0f, 0.0f, playerColor);
-                }
-            }
-            if (keys[DIK_S]) {
+            if (keys[DIK_A] && keys[DIK_D]) {
                 if (isTurnLeft == 1) {
                     Novice::DrawSprite(posX, posY, playerImage[6], 1.0f, 1.0f, 0.0f, playerColor);
                 }
