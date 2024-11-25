@@ -558,6 +558,9 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
     int circleTimer = 0;
 
     bool battleStart = false;
+
+    int randX = 0;
+    int randY = 0;
    
     // ウィンドウの×ボタンが押されるまでループ
     while (Novice::ProcessMessage() == 0) {
@@ -586,13 +589,17 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
         case GAME:
             
             if (battleStart == false) {
-                bossPosY += 5;
+                randX = rand() % 3 - 2;
+                randY = rand() % 3 - 2;
+                bossPosY += 3;
             }
             if (bossPosY >= 500 && battleStart == false) {
                 battleStart = true;
             }
 
             if (battleStart) {
+                randX = 0;
+                randY = 0;
                 // 横移動
                 if (keys[DIK_A]) posX -= playerSpeed;
                 if (keys[DIK_D]) posX += playerSpeed;
@@ -689,9 +696,6 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
                     randomBeamIndex = rand() % 3;  // 0から6の間でランダムに選択
                     bossBeamCooldown = 0; // クールダウンリセット
                 }
-                // ボスの座標
-                bossCenterX = static_cast<float>(bossPosX) + static_cast<float>(bossSizeX) / 2.0f;
-                bossCenterY = static_cast<float>(bossPosY) + static_cast<float>(bossSizeY) / 2.0f;
                 if (randomBeamIndex != -1) {
                     // ランダムで選ばれたビームを発射する処理
                     switch (randomBeamIndex) {
@@ -875,6 +879,9 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
                     scene = GAME_CLEAR;
                 }
             }
+            // ボスの座標
+            bossCenterX = static_cast<float>(bossPosX) + static_cast<float>(bossSizeX) / 2.0f;
+            bossCenterY = static_cast<float>(bossPosY) + static_cast<float>(bossSizeY) / 2.0f;
             // パーティクル生成
             if (rand() % 5 == 0) { // 毎フレームではなく間引いて生成
                 GenerateParticle(bossCenterX, bossCenterY);
@@ -915,7 +922,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
             break;
         case GAME:
             //背景描画
-            Novice::DrawSprite(0, 0, stageBackGround, 1.2f, 1.2f, 0.0f, WHITE);
+            Novice::DrawSprite(0 + randX, 0 + randY, stageBackGround, 1.2f, 1.2f, 0.0f, WHITE);
             if (battleStart) {
                 // ゲーム内でのビームと自機の衝突判定
                 if (playerColor == RED) {
@@ -1053,16 +1060,16 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
                     Novice::PlayAudio(slashSounds, 0, 0.5f);
                 }
             }
-           
-            // パーティクル描画
-            DrawParticles();
-            DrawBlackParticles();
+          
             // 地面の描画
             Novice::DrawBox(0, 600, 1600, 200, 0.0f, 0xb8860b, kFillModeSolid);
             
             //プレイヤーのHPゲージ(仮置き)
             Novice::DrawSprite(100, 750, playerGauge, 1.0f, 1.0f, 0.0f, WHITE);
 
+            // パーティクル描画
+            DrawParticles();
+            DrawBlackParticles();
             //ボス
             if (bossHP > 0) {
                 //Novice::DrawBox(bossPosX, bossPosY, bossSizeX, bossSizeY, 0.0f, bossColor, kFillModeSolid);
@@ -1090,6 +1097,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
                 //ボスゲージ（仮置き）
                 Novice::DrawSprite(400, 100, bossGauge, 1.0f, 1.0f, 0.0f, WHITE);
             }
+
             // 自機の残像を描画（透明度を反映）
             for (int i = 0; i < playerTrail.size(); ++i) {
                 // 透明度をアルファ値に変換（0.0～1.0 → 0x00～0xFF）
