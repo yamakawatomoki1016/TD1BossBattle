@@ -249,33 +249,6 @@ bool CheckCollisionWithSlash(float x1, float y1, float x2, float y2, float cx, f
     // 距離が半径より小さい場合、衝突
     return distanceSquared <= (r * r);
 }
-//void DrawLightningLine(int startX, int startY, int endX, int endY, unsigned int color) {
-//    const int segments = 400;  // 分割するセグメント数
-//    const int maxOffset = 40;  // セグメントごとの最大オフセット値
-//
-//    int prevX = startX;
-//    int prevY = startY;
-//
-//    for (int i = 1; i <= segments; ++i) {
-//        float t = static_cast<float>(i) / segments;
-//        int currentX = static_cast<int>(startX + (endX - startX) * t);
-//        int currentY = static_cast<int>(startY + (endY - startY) * t);
-//
-//        currentX += (rand() % (2 * maxOffset)) - maxOffset;
-//        currentY += (rand() % (2 * maxOffset)) - maxOffset;
-//
-//        Novice::DrawLine(prevX, prevY, currentX, currentY, color);
-//
-//        prevX = currentX;
-//        prevY = currentY;
-//    }
-//}
-//
-//void DrawBeams(int* startLineX, int* startLineY, int* goalLineX, int* goalLineY, unsigned int color) {
-//    for (int i = 0; i < 7; ++i) {
-//        DrawLightningLine(startLineX[i], startLineY[i], goalLineX[i], goalLineY[i], color);
-//    }
-//}
 
 bool CheckCollision(float leftTopX, float leftTopY, float rightTopX, float rightTopY, float leftBottomX, float leftBottomY, float rightBottomX, float rightBottomY, int bossPosX, int bossPosY, int bossSizeX, int bossSizeY) {
     // ボスの矩形領域
@@ -293,6 +266,25 @@ bool CheckCollision(float leftTopX, float leftTopY, float rightTopX, float right
 
 int bossColor = WHITE;
 int bossHP = 200;
+//ボスのHPバー
+int bossHPLeftTopX = 503;
+int bossHPLeftTopY = 45;
+int bossHPLeftBottomX = 462;
+int bossHPLeftBottomY = 105;
+float bossHPRightTopX = 1079.0f;
+int bossHPRightTopY = 45;
+float bossHPRightBottomX = 1037.0f;
+int bossHPRightBottomY = 105;
+//プレイヤーのHPバー
+int playerHPLeftTopX = 136;
+int playerHPLeftTopY = 780;
+int playerHPLeftBottomX = 102;
+int playerHPLeftBottomY = 846;
+float playerHPRightTopX = 420.0f;
+int playerHPRightTopY = 780;
+float playerHPRightBottomX = 387.0f;
+int playerHPRightBottomY = 846;
+
 void DrawSlash(int startX, int startY, int targetX, int targetY, unsigned int color, float length, int bossPosX, int bossPosY, int bossSizeX, int bossSizeY) {
     const float width = 130.0f;
 
@@ -323,6 +315,8 @@ void DrawSlash(int startX, int startY, int targetX, int targetY, unsigned int co
     if (bossHP > 0) {
         if (CheckCollision(leftTopX, leftTopY, rightTopX, rightTopY, leftBottomX, leftBottomY, rightBottomX, rightBottomY, bossPosX, bossPosY, bossSizeX, bossSizeY)) {
             bossHP -= 1;
+            bossHPRightTopX -= 2.88f;
+            bossHPRightBottomX -= 2.88f;
             bossColor = RED; // 当たった瞬間だけ赤に変更
         }
     }
@@ -375,6 +369,8 @@ void ExecuteCloseRangeAttack(int playerPosX, int playerPosY, int playerSizeX, in
                 if (playerPosX + playerSizeX >= bossCenterX - bossSizeX / 2 - 70 && playerPosX <= bossCenterX - bossSizeX / 2 - 70 + 70) {
                     if (playerPosY + playerSizeY >= bossCenterY - bossSizeY / 2 && playerPosY <= bossCenterY + bossSizeY / 2) {
                         playerHP -= 10; // ダメージ処理
+                        playerHPRightTopX -= 2.84f;
+                        playerHPRightBottomX -= 2.84f;
                         playerColor = RED;
                     }
                 }
@@ -386,6 +382,8 @@ void ExecuteCloseRangeAttack(int playerPosX, int playerPosY, int playerSizeX, in
                 if (playerPosX + playerSizeX >= bossCenterX + bossSizeX / 2 + 10 && playerPosX <= bossCenterX + bossSizeX / 2 + 10 + 70) {
                     if (playerPosY + playerSizeY >= bossCenterY - bossSizeY / 2 && playerPosY <= bossCenterY + bossSizeY / 2) {
                         playerHP -= 10; // ダメージ処理
+                        playerHPRightTopX -= 2.84f;
+                        playerHPRightBottomX -= 2.84f;
                         playerColor = RED;
                     }
                 }
@@ -434,6 +432,8 @@ void MoveBullets(int playerPosY, int playerPosX, int playerSizeX, int playerSize
             if (bulletPosX[i] > playerPosX && bulletPosX[i] < playerPosX + playerSizeX &&
                 bulletPosY[i] > playerPosY && bulletPosY[i] < playerPosY + playerSizeY) {
                 playerHP -= 100; // 自機のHPを減少
+                playerHPRightTopX -= 28.4f;
+                playerHPRightBottomX -= 28.4f;
                 playerColor = RED;
                 bulletActive[i] = false; // 弾を消す
                 bulletTimer[i] = 0;
@@ -570,16 +570,8 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
     int randX = 0;
     int randY = 0;
 
-    //ボスのHPバー
-    int bossHPLeftTopX = 503;
-    int bossHPLeftTopY = 45;
-    int bossHPLeftBottomX = 462;
-    int bossHPLeftBottomY = 105;
-    int bossHPRightTopX = 1079;
-    int bossHPRightTopY = 45;
-    int bossHPRightBottomX = 1037;
-    int bossHPRightBottomY = 105;
     int bossHPGrh = Novice::LoadTexture("white1x1.png");
+    int playerHPGrh = Novice::LoadTexture("white1x1.png");
    
     // ウィンドウの×ボタンが押されるまでループ
     while (Novice::ProcessMessage() == 0) {
@@ -601,7 +593,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
         switch (scene)
         {
         case TITLE:
-            if (keys[DIK_P] && preKeys[DIK_P] == 0) {
+            if (Novice::IsTriggerMouse(0)) {
                 scene = GAME;
             }
             break;
@@ -702,6 +694,8 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
                         // 円が自機と衝突したか判定
                         if (CheckCollisionWithPlayer((float)posX, (float)posY, sizeX, sizeY, circle.x, circle.y, circle.radius)) {
                             playerHP -= 10; // 衝突した場合のダメージ
+                            playerHPRightTopX -= 2.85f;
+                            playerHPRightBottomX -= 2.84f;
                             circle.active = false; // 衝突したら弾は消す
                             playerColor = RED; // 自機がダメージを受けたら色を変える
                         }
@@ -911,14 +905,14 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
             UpdateBlackParticles();
             break;
         case GAME_CLEAR:
-            if (keys[DIK_P] && preKeys[DIK_P] == 0) {
+            if (Novice::IsTriggerMouse(0)) {
                 playerHP = 1000;
                 bossHP = 20;
                 scene = TITLE;
             }
             break;
         case GAME_OVER:
-            if (keys[DIK_P] && preKeys[DIK_P] == 0) {
+            if (Novice::IsTriggerMouse(0)) {
                 playerHP = 1000;
                 bossHP = 20;
                 scene = TITLE;
@@ -950,6 +944,8 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
                 for (int i = 0; i < 7; ++i) {
                     if (CheckBeamCollisionWithPlayer(posX, posY, sizeX, sizeY, startLineX[i], startLineY[i], goalLineX[i], goalLineY[i])) {
                         playerHP -= 10;  // 自機がビームに当たった場合のダメージ
+                        playerHPRightTopX -= 2.84f;
+                        playerHPRightBottomX -= 2.84f;
                         playerColor = RED;
                     }
                 }
@@ -1075,6 +1071,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
             Novice::DrawBox(0, 600, 1600, 200, 0.0f, 0xb8860b, kFillModeSolid);
             
             //プレイヤーのHPゲージ(仮置き)
+            Novice::DrawQuad(playerHPLeftTopX, playerHPLeftTopY, (int)playerHPRightTopX, playerHPRightTopY, playerHPLeftBottomX, playerHPLeftBottomY, (int)playerHPRightBottomX, playerHPRightBottomY, 0, 0, 1, 1, playerHPGrh, GREEN);
             Novice::DrawSprite(100, 750, playerGauge, 1.0f, 1.0f, 0.0f, WHITE);
 
             // パーティクル描画
@@ -1110,15 +1107,14 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
                             static_cast<int>(circle.y) - 16, blackBall, 1, 1, .0f, WHITE);
                     }
                 }
-                //ボスゲージ（仮置き）
-                Novice::DrawQuad(bossHPLeftTopX, bossHPLeftTopY, bossHPRightTopX, bossHPRightTopY, bossHPLeftBottomX, bossHPLeftBottomY, bossHPRightBottomX, bossHPRightBottomY, 0, 0, 1, 1, bossHPGrh, WHITE);
+                //ボスゲージ
+                Novice::DrawQuad(bossHPLeftTopX, bossHPLeftTopY, (int)bossHPRightTopX, bossHPRightTopY, bossHPLeftBottomX, bossHPLeftBottomY, (int)bossHPRightBottomX, bossHPRightBottomY, 0, 0, 1, 1, bossHPGrh, RED);
                 //ボスのHPバー
-                Novice::DrawSprite(450, 30, bossGauge, 1.0f, 1.0f, 0.0f, WHITE);
+                Novice::DrawSprite(450, 30, bossGauge, 1.0f, 1.0f, 0.0f, RED);
             }
 
             // 自機の残像を描画（透明度を反映）
             for (int i = 0; i < playerTrail.size(); ++i) {
-                // 透明度をアルファ値に変換（0.0～1.0 → 0x00～0xFF）
                 int alphaValue = static_cast<int>(playerTrail[i].alpha * 255.0f);
                 unsigned int colorWithAlpha = (alphaValue << 24) | 0x10e6e6fa; // 透明度を上位8ビットに設定
                 if (keys[DIK_A] && !keys[DIK_D]) {
@@ -1172,7 +1168,6 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
                 }
             }
 
-            //DrawBeams(startLineX, startLineY, goalLineX, goalLineY, BLACK);
             bossColor = WHITE;
 
             Novice::ScreenPrintf(20, 20, "bossHP : %d", bossHP);
