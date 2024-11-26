@@ -198,7 +198,7 @@ bool CheckCollisionWithPlayer(float playerX, float playerY, float playerWidth, f
 }
 
 void LaunchCircles(float startX, float startY) {
-    const int circleCount = 100;
+    const int circleCount = 50;
     const float speed = 1.0f; // 円が飛ぶ速度
 
     circles.clear(); // 前の円をリセット
@@ -532,8 +532,22 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
         Novice::LoadTexture("./Resources/sphere3.png"),
         Novice::LoadTexture("./Resources/sphere4.png"),
     };
+    int bossChange[12]{
+        Novice::LoadTexture("./Resources/bossCatHennshin01.png"),
+        Novice::LoadTexture("./Resources/bossCatHennshin02.png"),
+        Novice::LoadTexture("./Resources/bossCatHennshin03.png"),
+        Novice::LoadTexture("./Resources/bossCatHennshin04.png"),
+        Novice::LoadTexture("./Resources/bossCatHennshin05.png"),
+        Novice::LoadTexture("./Resources/bossCatHennshin06.png"),
+        Novice::LoadTexture("./Resources/bossCatHennshin07.png"),
+        Novice::LoadTexture("./Resources/bossCatHennshin08.png"),
+        Novice::LoadTexture("./Resources/bossCatHennshin09.png"),
+        Novice::LoadTexture("./Resources/bossCatHennshin10.png"),
+        Novice::LoadTexture("./Resources/bossCatHennshin11.png"),
+        Novice::LoadTexture("./Resources/bossCatHennshin12.png"),
+    };
     //int bossImage = Novice::LoadTexture("./Resources/darkPhenix01.png");
-    int catBossImage = Novice::LoadTexture("./Resources/bossCatAttack01.png");
+    //int catBossImage = Novice::LoadTexture("./Resources/bossCatAttack01.png");
     int bossGauge = Novice::LoadTexture("./Resources/bossgauge.png");
     int stageBackGround = Novice::LoadTexture("./Resources/haikei0003.png");
     int playerGauge = Novice::LoadTexture("./Resources/playerGauge.png");
@@ -556,6 +570,8 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
     int isTurnRight = true;
     int bossImageChange = false;
     int homingBulletTimer = 0;
+    int bossChangeFrameCount = 0;
+    //int bossChange
     // ジャンプ関連の変数
     bool isJumping = false; // ジャンプ中かどうか
     int jumpVelocity = 0; // ジャンプの速度
@@ -616,7 +632,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
             if (bossPosY >= 500 && battleStart == false) {
                 battleStart = true;
             }
-            if (bossHP == 100) {
+            if (bossHP == 99) {
                 battleStopFlag = true;
             }
 
@@ -659,7 +675,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
                     }
 
                     //円形の攻撃をしてくる
-                    if (bossHP <= 99) {
+                    if (bossHP <= 199) {
                         if (isFirstLaunch) {
                             // 最初の発射
                             LaunchCircles(static_cast<float>(bossPosX) + bossSizeX / 2, static_cast<float>(bossPosY) + bossSizeY / 2);
@@ -1093,12 +1109,11 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
             DrawParticles();
             DrawBlackParticles();
             //ボス
-            if (bossHP > 0) {
-                //デバック用のボス画像切り替え(後からボス描画以外消去)
-                if (keys[DIK_C] && !preKeys[DIK_C]) {
+            if (battleStopFlag) { 
+                /*if (keys[DIK_C] && !preKeys[DIK_C]) {
                     if (bossImageChange == 0) {
                         bossImageChange = true;
-                    }  
+                    }
                 }
                 if (keys[DIK_V] && !preKeys[DIK_V]) {
                     if (bossImageChange == 1) {
@@ -1110,11 +1125,27 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
                     if (bossImageFrameCount >= 45) {
                         bossImageFrameCount = 0;
                     }
-                    Novice::DrawSprite(bossPosX, bossPosY, bossImage[bossImageFrameCount/15], 1.0f, 1.0f, 0.0f, bossColor);
+                    Novice::DrawSprite(bossPosX, bossPosY, bossImage[bossImageFrameCount / 15], 1.0f, 1.0f, 0.0f, bossColor);
                 }
                 if (bossImageChange == 1) {
                     Novice::DrawSprite(bossPosX, bossPosY, catBossImage, 1.0f, 1.0f, 0.0f, bossColor);
+                }*/
+                
+                //ボスの形態変化
+                bossChangeFrameCount++;
+                if (bossChangeFrameCount > 187 && battleStopFlag) {
+                    bossChangeFrameCount = 187;
+                    bossHP--;
+                    battleStopFlag = false;
                 }
+                Novice::DrawSprite(bossPosX, bossPosY, bossChange[bossChangeFrameCount / 17], 1.0f, 1.0f, 0.0f, WHITE);
+            }             
+            if (bossHP > 0 && battleStopFlag == false) {
+                bossImageFrameCount++;
+                if (bossImageFrameCount >= 45) {
+                    bossImageFrameCount = 0;
+                }
+                Novice::DrawSprite(bossPosX, bossPosY, bossImage[bossImageFrameCount / 15], 1.0f, 1.0f, 0.0f, bossColor);
                 // 飛んでいる円を描画
                 for (const auto& circle : circles) {
                     if (circle.active) {
@@ -1123,7 +1154,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
                             sphereImageFrameCount = 0;
                         }
                         Novice::DrawSprite(static_cast<int>(circle.x) - 16,
-                            static_cast<int>(circle.y) - 16, sphere[sphereImageFrameCount/20], 1, 1, .0f, WHITE);
+                            static_cast<int>(circle.y) - 16, sphere[sphereImageFrameCount / 20], 1, 1, .0f, WHITE);
                     }
                 }
                 //ボスゲージ
