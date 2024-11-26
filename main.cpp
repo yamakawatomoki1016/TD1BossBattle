@@ -493,7 +493,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
     bool bossCircularAttackFlag = false; // 最初の発射フラグ
     int bossCircularAttackCooldown = 1400; // 1400フレームのクールダウン
     bool isFirstLaunch = true; // 初回発射かどうかを判定するフラグ
-    int blackBall = Novice::LoadTexture("./Resources/blackBall.png");
+    //int blackBall = Novice::LoadTexture("./Resources/blackBall.png");
 
     int scene = TITLE;
     //ビームの実際の当たり判定
@@ -527,6 +527,12 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
         Novice::LoadTexture("./Resources/enemyBoss3.png"),
         Novice::LoadTexture("./Resources/enemyBoss4.png"),
     };
+    int sphere[4] = {
+        Novice::LoadTexture("./Resources/sphere1.png"),
+        Novice::LoadTexture("./Resources/sphere2.png"),
+        Novice::LoadTexture("./Resources/sphere3.png"),
+        Novice::LoadTexture("./Resources/sphere4.png"),
+    };
     //int bossImage = Novice::LoadTexture("./Resources/darkPhenix01.png");
     int catBossImage = Novice::LoadTexture("./Resources/bossCatAttack01.png");
     int bossGauge = Novice::LoadTexture("./Resources/bossgauge.png");
@@ -546,6 +552,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
     int playerImageFrameCount = 0;
     int playerWaitImageFrameCount = 0;
     int bossImageFrameCount = 0;
+    int sphereImageFrameCount = 0;
     int isTurnLeft = false;
     int isTurnRight = true;
     int bossImageChange = false;
@@ -653,7 +660,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
                     }
 
                     //円形の攻撃をしてくる
-                    if (bossHP <= 99) {
+                    if (bossHP <= 199) {
                         if (isFirstLaunch) {
                             // 最初の発射
                             LaunchCircles(static_cast<float>(bossPosX) + bossSizeX / 2, static_cast<float>(bossPosY) + bossSizeY / 2);
@@ -1111,8 +1118,12 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
                 // 飛んでいる円を描画
                 for (const auto& circle : circles) {
                     if (circle.active) {
+                        sphereImageFrameCount++;
+                        if (sphereImageFrameCount >= 60) {
+                            sphereImageFrameCount = 0;
+                        }
                         Novice::DrawSprite(static_cast<int>(circle.x) - 16,
-                            static_cast<int>(circle.y) - 16, blackBall, 1, 1, .0f, WHITE);
+                            static_cast<int>(circle.y) - 16, sphere[sphereImageFrameCount/20], 1, 1, .0f, WHITE);
                     }
                 }
                 //ボスゲージ
