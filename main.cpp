@@ -198,7 +198,7 @@ bool CheckCollisionWithPlayer(float playerX, float playerY, float playerWidth, f
 }
 
 void LaunchCircles(float startX, float startY) {
-    const int circleCount = 100;
+    const int circleCount = 10;
     const float speed = 1.0f; // 円が飛ぶ速度
 
     circles.clear(); // 前の円をリセット
