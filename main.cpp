@@ -538,7 +538,6 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
     int homingBullet1 = Novice::LoadTexture("./Resources/tuibi1.png");
     int homingBullet2 = Novice::LoadTexture("./Resources/tuibi2.png");
     int homingBullet3 = Novice::LoadTexture("./Resources/tuibi3.png");
-    int sphere = Novice::LoadTexture("./Resources/ennkeiSphere.png");
 
     //音の読み込み
     //int homingBulletSounds = Novice::LoadAudio("./Resources/maou_se_sound03.mp3");
