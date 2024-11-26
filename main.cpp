@@ -535,9 +535,10 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
     //int slash = Novice::LoadTexture("./Resources/slash.png");
     int title = Novice::LoadTexture("./Resources/title.png");
     int gameover = Novice::LoadTexture("./Resources/zannnenn.png");
-    int homingBullet1 = Novice::LoadTexture("./Resources/tuibidan1.png");
-    int homingBullet2 = Novice::LoadTexture("./Resources/tuibidan2.png");
-    int homingBullet3 = Novice::LoadTexture("./Resources/tuibidan3.png");
+    int homingBullet1 = Novice::LoadTexture("./Resources/tuibi1.png");
+    int homingBullet2 = Novice::LoadTexture("./Resources/tuibi2.png");
+    int homingBullet3 = Novice::LoadTexture("./Resources/tuibi3.png");
+    int sphere = Novice::LoadTexture("./Resources/ennkeiSphere.png");
 
     //音の読み込み
     //int homingBulletSounds = Novice::LoadAudio("./Resources/maou_se_sound03.mp3");
@@ -1172,7 +1173,6 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
             }
 
             //DrawBeams(startLineX, startLineY, goalLineX, goalLineY, BLACK);
-
             bossColor = WHITE;
 
             Novice::ScreenPrintf(20, 20, "bossHP : %d", bossHP);
