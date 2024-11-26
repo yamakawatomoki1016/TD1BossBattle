@@ -307,7 +307,6 @@ void DrawSlash(int startX, int startY, int targetX, int targetY, unsigned int co
     float rightBottomY = rightTopY + length * sinf(angle);
 
     // ボックスを描画
-    //int slash = Novice::LoadTexture("./Resources/slash.png");
     Novice::DrawQuad(int(leftTopX), int(leftTopY), int(rightTopX), int(rightTopY), int(leftBottomX), int(leftBottomY), int(rightBottomX), int(rightBottomY), 0, 0, 1, 1, 0, color);
 
 
@@ -715,6 +714,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
                             }
                         }
                     }
+
                     // クールダウンのタイマーを更新
                     bossBeamCooldown++;
 
@@ -1135,7 +1135,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
             // 自機の残像を描画（透明度を反映）
             for (int i = 0; i < playerTrail.size(); ++i) {
                 int alphaValue = static_cast<int>(playerTrail[i].alpha * 255.0f);
-                unsigned int colorWithAlpha = (alphaValue << 24) | 0x10e6e6fa; // 透明度を上位8ビットに設定
+                unsigned int colorWithAlpha = (alphaValue << 24) | 0x7e6e6fa; // 透明度を上位8ビットに設定
                 if (keys[DIK_A] && !keys[DIK_D]) {
                     Novice::DrawSprite(static_cast<int>(playerTrail[i].x), static_cast<int>(playerTrail[i].y), playerImage[playerImageFrameCount / 12], 1, 1, 0.0f, colorWithAlpha);
                 }
