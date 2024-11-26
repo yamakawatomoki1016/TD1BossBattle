@@ -546,6 +546,12 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
         Novice::LoadTexture("./Resources/bossCatHennshin11.png"),
         Novice::LoadTexture("./Resources/bossCatHennshin12.png"),
     };
+    int playerAttackImage[4]{
+        Novice::LoadTexture("./Resources/playerAttack1.png"),
+        Novice::LoadTexture("./Resources/playerAttack2.png"),
+        Novice::LoadTexture("./Resources/playerAttack3.png"),
+        Novice::LoadTexture("./Resources/playerAttack4.png"),
+    };
     //int bossImage = Novice::LoadTexture("./Resources/darkPhenix01.png");
     //int catBossImage = Novice::LoadTexture("./Resources/bossCatAttack01.png");
     int bossGauge = Novice::LoadTexture("./Resources/bossgauge.png");
@@ -559,10 +565,12 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
     int homingBullet3 = Novice::LoadTexture("./Resources/tuibi3.png");
 
     //音の読み込み
-    //int homingBulletSounds = Novice::LoadAudio("./Resources/maou_se_sound03.mp3");
+    int bgm = Novice::LoadAudio("./Resources/maou_game_boss05.mp3");
     int slashSounds = Novice::LoadAudio("./Resources/maou_se_battle03.mp3");
+    //int playHundle = -1;
 
     int playerImageFrameCount = 0;
+    //int playerAttackImageFrameCount = 0;
     int playerWaitImageFrameCount = 0;
     int bossImageFrameCount = 0;
     int sphereImageFrameCount = 0;
@@ -638,6 +646,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
             if (battleStart) {
                 if (battleStopFlag == false) {
+                    Novice::PlayAudio(bgm, 1, 0.5f);
                     randX = 0;
                     randY = 0;
                     // 横移動
@@ -1095,6 +1104,21 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
                 if (Novice::IsTriggerMouse(0)) {
                     DrawSlash(posX + sizeX / 2, posY + sizeY / 2, mouseX, mouseY, WHITE, 60.0f, bossPosX, bossPosY, bossSizeX, bossSizeY);
                     Novice::PlayAudio(slashSounds, 0, 0.5f);
+                    //プレイヤーが攻撃したときのモーション
+                   /* if (isTurnLeft) {
+                        playerAttackImageFrameCount++;
+                        if (playerAttackImageFrameCount >= 16) {
+                            playerAttackImageFrameCount = 0;
+                        }
+                        Novice::DrawSprite(posX, posY, playerAttackImage[playerAttackImageFrameCount / 4], 1.0f, 1.0f, 0.0f, playerColor);
+                    }
+                    if (isTurnRight) {
+                        playerAttackImageFrameCount++;
+                        if (playerAttackImageFrameCount >= 16) {
+                            playerAttackImageFrameCount = 0;
+                        }
+                        Novice::DrawSprite(posX+sizeX, posY, playerAttackImage[playerAttackImageFrameCount / 4], -1.0f, 1.0f, 0.0f, playerColor);
+                    }*/
                 }
             }
           
@@ -1175,7 +1199,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
                 }
             }
             //プレイヤーの画像描画
-            if (keys[DIK_A] && !keys[DIK_D]) {
+            if (keys[DIK_A] && !keys[DIK_D] && !Novice::IsTriggerMouse(0)) {
                 playerImageFrameCount++;
                 if (playerImageFrameCount >= 60) {
                     playerImageFrameCount = 0;
@@ -1184,7 +1208,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
                 isTurnLeft = true;
                 isTurnRight = false;
             }
-            if (keys[DIK_D] && !keys[DIK_A]) {
+            if (keys[DIK_D] && !keys[DIK_A] && !Novice::IsTriggerMouse(0)) {
                 playerImageFrameCount++;
                 if (playerImageFrameCount >= 60) {
                     playerImageFrameCount = 0;
