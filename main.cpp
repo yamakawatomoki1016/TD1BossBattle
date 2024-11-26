@@ -249,33 +249,6 @@ bool CheckCollisionWithSlash(float x1, float y1, float x2, float y2, float cx, f
     // 距離が半径より小さい場合、衝突
     return distanceSquared <= (r * r);
 }
-//void DrawLightningLine(int startX, int startY, int endX, int endY, unsigned int color) {
-//    const int segments = 400;  // 分割するセグメント数
-//    const int maxOffset = 40;  // セグメントごとの最大オフセット値
-//
-//    int prevX = startX;
-//    int prevY = startY;
-//
-//    for (int i = 1; i <= segments; ++i) {
-//        float t = static_cast<float>(i) / segments;
-//        int currentX = static_cast<int>(startX + (endX - startX) * t);
-//        int currentY = static_cast<int>(startY + (endY - startY) * t);
-//
-//        currentX += (rand() % (2 * maxOffset)) - maxOffset;
-//        currentY += (rand() % (2 * maxOffset)) - maxOffset;
-//
-//        Novice::DrawLine(prevX, prevY, currentX, currentY, color);
-//
-//        prevX = currentX;
-//        prevY = currentY;
-//    }
-//}
-//
-//void DrawBeams(int* startLineX, int* startLineY, int* goalLineX, int* goalLineY, unsigned int color) {
-//    for (int i = 0; i < 7; ++i) {
-//        DrawLightningLine(startLineX[i], startLineY[i], goalLineX[i], goalLineY[i], color);
-//    }
-//}
 
 bool CheckCollision(float leftTopX, float leftTopY, float rightTopX, float rightTopY, float leftBottomX, float leftBottomY, float rightBottomX, float rightBottomY, int bossPosX, int bossPosY, int bossSizeX, int bossSizeY) {
     // ボスの矩形領域
@@ -293,6 +266,25 @@ bool CheckCollision(float leftTopX, float leftTopY, float rightTopX, float right
 
 int bossColor = WHITE;
 int bossHP = 200;
+//ボスのHPバー
+int bossHPLeftTopX = 503;
+int bossHPLeftTopY = 45;
+int bossHPLeftBottomX = 462;
+int bossHPLeftBottomY = 105;
+float bossHPRightTopX = 1079.0f;
+int bossHPRightTopY = 45;
+float bossHPRightBottomX = 1037.0f;
+int bossHPRightBottomY = 105;
+//プレイヤーのHPバー
+int playerHPLeftTopX = 136;
+int playerHPLeftTopY = 780;
+int playerHPLeftBottomX = 102;
+int playerHPLeftBottomY = 846;
+float playerHPRightTopX = 420.0f;
+int playerHPRightTopY = 780;
+float playerHPRightBottomX = 387.0f;
+int playerHPRightBottomY = 846;
+
 void DrawSlash(int startX, int startY, int targetX, int targetY, unsigned int color, float length, int bossPosX, int bossPosY, int bossSizeX, int bossSizeY) {
     const float width = 130.0f;
 
@@ -323,6 +315,8 @@ void DrawSlash(int startX, int startY, int targetX, int targetY, unsigned int co
     if (bossHP > 0) {
         if (CheckCollision(leftTopX, leftTopY, rightTopX, rightTopY, leftBottomX, leftBottomY, rightBottomX, rightBottomY, bossPosX, bossPosY, bossSizeX, bossSizeY)) {
             bossHP -= 1;
+            bossHPRightTopX -= 2.88f;
+            bossHPRightBottomX -= 2.88f;
             bossColor = RED; // 当たった瞬間だけ赤に変更
         }
     }
@@ -375,6 +369,8 @@ void ExecuteCloseRangeAttack(int playerPosX, int playerPosY, int playerSizeX, in
                 if (playerPosX + playerSizeX >= bossCenterX - bossSizeX / 2 - 70 && playerPosX <= bossCenterX - bossSizeX / 2 - 70 + 70) {
                     if (playerPosY + playerSizeY >= bossCenterY - bossSizeY / 2 && playerPosY <= bossCenterY + bossSizeY / 2) {
                         playerHP -= 10; // ダメージ処理
+                        playerHPRightTopX -= 2.84f;
+                        playerHPRightBottomX -= 2.84f;
                         playerColor = RED;
                     }
                 }
@@ -386,6 +382,8 @@ void ExecuteCloseRangeAttack(int playerPosX, int playerPosY, int playerSizeX, in
                 if (playerPosX + playerSizeX >= bossCenterX + bossSizeX / 2 + 10 && playerPosX <= bossCenterX + bossSizeX / 2 + 10 + 70) {
                     if (playerPosY + playerSizeY >= bossCenterY - bossSizeY / 2 && playerPosY <= bossCenterY + bossSizeY / 2) {
                         playerHP -= 10; // ダメージ処理
+                        playerHPRightTopX -= 2.84f;
+                        playerHPRightBottomX -= 2.84f;
                         playerColor = RED;
                     }
                 }
@@ -434,6 +432,8 @@ void MoveBullets(int playerPosY, int playerPosX, int playerSizeX, int playerSize
             if (bulletPosX[i] > playerPosX && bulletPosX[i] < playerPosX + playerSizeX &&
                 bulletPosY[i] > playerPosY && bulletPosY[i] < playerPosY + playerSizeY) {
                 playerHP -= 100; // 自機のHPを減少
+                playerHPRightTopX -= 28.4f;
+                playerHPRightBottomX -= 28.4f;
                 playerColor = RED;
                 bulletActive[i] = false; // 弾を消す
                 bulletTimer[i] = 0;
@@ -569,16 +569,12 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
     int randX = 0;
     int randY = 0;
 
-    //ボスのHPバー
-    int bossHPLeftTopX = 503;
-    int bossHPLeftTopY = 45;
-    int bossHPLeftBottomX = 462;
-    int bossHPLeftBottomY = 105;
-    int bossHPRightTopX = 1079;
-    int bossHPRightTopY = 45;
-    int bossHPRightBottomX = 1037;
-    int bossHPRightBottomY = 105;
     int bossHPGrh = Novice::LoadTexture("white1x1.png");
+    int playerHPGrh = Novice::LoadTexture("white1x1.png");
+
+    //変身するときのバトルを止める変数
+    bool battleStopFlag = false;
+    //int battleStopTimer = 0;
    
     // ウィンドウの×ボタンが押されるまでループ
     while (Novice::ProcessMessage() == 0) {
@@ -600,7 +596,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
         switch (scene)
         {
         case TITLE:
-            if (keys[DIK_P] && preKeys[DIK_P] == 0) {
+            if (Novice::IsTriggerMouse(0)) {
                 scene = GAME;
             }
             break;
@@ -614,287 +610,294 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
             if (bossPosY >= 500 && battleStart == false) {
                 battleStart = true;
             }
+            if (bossHP == 100) {
+                battleStopFlag = true;
+            }
 
             if (battleStart) {
-                randX = 0;
-                randY = 0;
-                // 横移動
-                if (keys[DIK_A]) posX -= playerSpeed;
-                if (keys[DIK_D]) posX += playerSpeed;
+                if (battleStopFlag == false) {
+                    randX = 0;
+                    randY = 0;
+                    // 横移動
+                    if (keys[DIK_A]) posX -= playerSpeed;
+                    if (keys[DIK_D]) posX += playerSpeed;
 
-                // ジャンプ処理
-                if (!isJumping && keys[DIK_SPACE] && preKeys[DIK_SPACE] == 0) {
-                    isJumping = true;
-                    jumpVelocity = -jumpPower; // 上方向の速度をセット
-                }
-
-                // ジャンプ中の動き
-                if (isJumping) {
-                    posY += jumpVelocity; // Y座標を更新
-                    jumpVelocity += gravity; // 重力を適用
-
-                    // 地面に着地したら停止
-                    if (posY >= groundHeight - sizeY) {
-                        posY = groundHeight - sizeY;
-                        isJumping = false;
-                        jumpVelocity = 0;
+                    // ジャンプ処理
+                    if (!isJumping && keys[DIK_SPACE] && preKeys[DIK_SPACE] == 0) {
+                        isJumping = true;
+                        jumpVelocity = -jumpPower; // 上方向の速度をセット
                     }
-                }
 
-                // 自機の位置を過去に保存
-                playerTrail.push_back(Position{ (float)posX, (float)posY, 1.0f });  // 初期透明度は1.0
-                if (playerTrail.size() > MAX_TRAIL_LENGTH) {
-                    playerTrail.erase(playerTrail.begin());  // 古い位置を削除
-                }
+                    // ジャンプ中の動き
+                    if (isJumping) {
+                        posY += jumpVelocity; // Y座標を更新
+                        jumpVelocity += gravity; // 重力を適用
 
-                // 透明度をイージングで減少させる
-                for (int i = 0; i < playerTrail.size(); ++i) {
-                    playerTrail[i].alpha = EaseOut(static_cast<float>(i) / static_cast<float>(playerTrail.size()));
-                }
-
-                //円形の攻撃をしてくる
-                if (bossHP <= 150) {
-                    if (isFirstLaunch) {
-                        // 最初の発射
-                        LaunchCircles(static_cast<float>(bossPosX) + bossSizeX / 2, static_cast<float>(bossPosY) + bossSizeY / 2);
-                        bossCircularAttackFlag = true;
-                        bossCircularAttackTimer = 0; // タイマーリセット
-                        isFirstLaunch = false; // 初回発射フラグを無効にする
-                    }
-                }
-
-                if (bossCircularAttackFlag == true) {
-                    bossCircularAttackTimer++; // タイマー進行
-                    circleTimer++;
-                    // 最初に弾を発射してから10秒経過したら再度発射
-                    if (bossCircularAttackTimer >= bossCircularAttackCooldown) {
-                        LaunchCircles(static_cast<float>(bossPosX) + bossSizeX / 2, static_cast<float>(bossPosY) + bossSizeY / 2);
-                        bossCircularAttackTimer = 0; // タイマーリセット
-                    }
-                }
-
-                if (bossCircularAttackTimer >= 1400) { // 1200フレーム後に攻撃を終了
-                    bossCircularAttackFlag = false;
-                    bossCircularAttackTimer = 0;
-                }
-
-                // 飛んでいる円の位置を更新
-                for (auto& circle : circles) {
-                    if (circle.active) {
-                        circle.x += circle.vx;
-                        circle.y += circle.vy;
-                        if (circleTimer > 7) {
-                            circle.active = false;
-                            circleTimer = 0;
-                        }
-
-                        // ウィンドウ外に出たら非アクティブにする
-                        if (circle.x < 0 || circle.x > GetSystemMetrics(SM_CXSCREEN) || circle.y < 0 || circle.y > GetSystemMetrics(SM_CYSCREEN)) {
-                            circle.active = false;
+                        // 地面に着地したら停止
+                        if (posY >= groundHeight - sizeY) {
+                            posY = groundHeight - sizeY;
+                            isJumping = false;
+                            jumpVelocity = 0;
                         }
                     }
-                }
 
-                // 円のパラメータ
-                for (auto& circle : circles) {
-                    if (circle.active) {
-                        // 円が自機と衝突したか判定
-                        if (CheckCollisionWithPlayer((float)posX, (float)posY, sizeX, sizeY, circle.x, circle.y, circle.radius)) {
-                            playerHP -= 10; // 衝突した場合のダメージ
-                            circle.active = false; // 衝突したら弾は消す
-                            playerColor = RED; // 自機がダメージを受けたら色を変える
+                    // 自機の位置を過去に保存
+                    playerTrail.push_back(Position{ (float)posX, (float)posY, 1.0f });  // 初期透明度は1.0
+                    if (playerTrail.size() > MAX_TRAIL_LENGTH) {
+                        playerTrail.erase(playerTrail.begin());  // 古い位置を削除
+                    }
+
+                    // 透明度をイージングで減少させる
+                    for (int i = 0; i < playerTrail.size(); ++i) {
+                        playerTrail[i].alpha = EaseOut(static_cast<float>(i) / static_cast<float>(playerTrail.size()));
+                    }
+
+                    //円形の攻撃をしてくる
+                    if (bossHP <= 99) {
+                        if (isFirstLaunch) {
+                            // 最初の発射
+                            LaunchCircles(static_cast<float>(bossPosX) + bossSizeX / 2, static_cast<float>(bossPosY) + bossSizeY / 2);
+                            bossCircularAttackFlag = true;
+                            bossCircularAttackTimer = 0; // タイマーリセット
+                            isFirstLaunch = false; // 初回発射フラグを無効にする
                         }
                     }
-                }
-                // クールダウンのタイマーを更新
-                bossBeamCooldown++;
 
-                if (bossBeamCooldown > 600) {
-                    // 600フレーム経過したら、ランダムでビームを選択
-                    randomBeamIndex = rand() % 3;  // 0から6の間でランダムに選択
-                    bossBeamCooldown = 0; // クールダウンリセット
-                }
-                if (randomBeamIndex != -1) {
-                    // ランダムで選ばれたビームを発射する処理
-                    switch (randomBeamIndex) {
-                    case 0:
-                        // ビーム1の発射処理
-                        xBeamFlag = true;
-                        break;
-                    case 1:
-                        // ビーム2の発射処理
-                        xBeamFlag2 = true;
-                        break;
-                    case 2:
-                        // ビーム3の発射処理
-                        yBeamFlag = true;
-                        break;
+                    if (bossCircularAttackFlag == true) {
+                        bossCircularAttackTimer++; // タイマー進行
+                        circleTimer++;
+                        // 最初に弾を発射してから10秒経過したら再度発射
+                        if (bossCircularAttackTimer >= bossCircularAttackCooldown) {
+                            LaunchCircles(static_cast<float>(bossPosX) + bossSizeX / 2, static_cast<float>(bossPosY) + bossSizeY / 2);
+                            bossCircularAttackTimer = 0; // タイマーリセット
+                        }
                     }
-                }
 
-                if (xBeamFlag) {
-                    beamTimer[0]++;
-                }
-                if (xBeamFlag2) {
-                    beamTimer[1]++;
-                }
-                if (yBeamFlag) {
-                    beamTimer[2]++;
-                }
+                    if (bossCircularAttackTimer >= 1400) { // 1200フレーム後に攻撃を終了
+                        bossCircularAttackFlag = false;
+                        bossCircularAttackTimer = 0;
+                    }
 
-                // ビームの進行処理
-                if (xBeamFlag && beamTimer[0] > 60) {
-                    goalLineX[0] += 40; goalLineX[1] += 40;
-                }
-                // ビームの進行処理
-                if (xBeamFlag2 && beamTimer[1] > 60) {
-                    goalLineX[2] -= 40; goalLineX[3] -= 40;
-                }
-                if (yBeamFlag && beamTimer[2] > 60) {
-                    goalLineY[4] += 40;
-                    goalLineY[5] += 40;
-                    goalLineY[6] += 40;
-                }
+                    // 飛んでいる円の位置を更新
+                    for (auto& circle : circles) {
+                        if (circle.active) {
+                            circle.x += circle.vx;
+                            circle.y += circle.vy;
+                            if (circleTimer > 7) {
+                                circle.active = false;
+                                circleTimer = 0;
+                            }
 
-                // 端の位置制限
-                if (goalLineX[0] >= 800) { goalLineX[0] = 1600; startLineX[0] += 50; }
-                if (goalLineX[1] >= 800) { goalLineX[1] = 1600; startLineX[1] += 50; }
-                if (goalLineX[2] <= 600) { goalLineX[2] = -120; startLineX[2] -= 50; }
-                if (goalLineX[3] <= 600) { goalLineX[3] = -120; startLineX[3] -= 50; }
-                if (goalLineY[4] >= 700) { goalLineY[4] = 940; startLineY[4] += 50; }
-                if (goalLineY[5] >= 700) { goalLineY[5] = 940; startLineY[5] += 50; }
-                if (goalLineY[6] >= 700) { goalLineY[6] = 940; startLineY[6] += 50; }
+                            // ウィンドウ外に出たら非アクティブにする
+                            if (circle.x < 0 || circle.x > GetSystemMetrics(SM_CXSCREEN) || circle.y < 0 || circle.y > GetSystemMetrics(SM_CYSCREEN)) {
+                                circle.active = false;
+                            }
+                        }
+                    }
 
-                if (startLineX[0] >= 1400) {
-                    startLineX[0] = 1400;
-                    xBeamFlagInProgress = true;
-                    randomBeamIndex = -1;
-                    beamTimer[0] = 0;
-                }
-                if (startLineX[1] >= 1400) {
-                    startLineX[1] = 1400;
-                    xBeamFlagInProgress = true;
-                    randomBeamIndex = -1;
-                    beamTimer[0] = 0;
-                }
-                if (startLineX[2] <= 80) {
-                    startLineX[2] = 80;
-                    xBeamFlag2InProgress = true;
-                    randomBeamIndex = -1;
-                    beamTimer[1] = 0;
-                }
-                if (startLineX[3] <= 80) {
-                    startLineX[3] = 80;
-                    xBeamFlag2InProgress = true;
-                    randomBeamIndex = -1;
-                    beamTimer[1] = 0;
-                }
-                if (startLineY[4] >= 740) {
-                    startLineY[4] = 740;
-                    yBeamFlagInProgress = true;
-                    randomBeamIndex = -1;
-                    beamTimer[2] = 0;
-                }
-                if (startLineY[5] >= 740) {
-                    startLineY[5] = 740;
-                    yBeamFlagInProgress = true;
-                    randomBeamIndex = -1;
-                    beamTimer[2] = 0;
-                }
-                if (startLineY[6] >= 740) {
-                    startLineY[6] = 740;
-                    yBeamFlagInProgress = true;
-                    randomBeamIndex = -1;
-                    beamTimer[2] = 0;
-                }
-                
-                //ボスの近接攻撃のクールタイム
-                if (bossAttackTimeFlag) {
-                    bossAttackCoolTime++;
-                }
-                if (bossAttackCoolTime > 140) {
-                    bossAttackTimeFlag = false;
-                    bossAttackCoolTime = 0;
-                }
-                if (bossAttackTimeFlag == false) {
-                    ExecuteCloseRangeAttack(posX, posY, sizeX, sizeY, bossPosX, bossPosY, bossSizeX, bossSizeY);
-                }
-                bulletCooldown--;
-                if (bossHP > 0) {
-                    ShootBullets(bossPosX, bossPosY, posX, posY, bossSizeX); // ボスから弾を発射
-                }
-                MoveBullets(posY, posX, sizeX, sizeY); // 弾を移動
-                //敵の近接攻撃のクールダウン
-                if (bossAttackCooldownTime > 0) {
-                    bossAttackCooldownTime--;
-                }
+                    // 円のパラメータ
+                    for (auto& circle : circles) {
+                        if (circle.active) {
+                            // 円が自機と衝突したか判定
+                            if (CheckCollisionWithPlayer((float)posX, (float)posY, sizeX, sizeY, circle.x, circle.y, circle.radius)) {
+                                playerHP -= 10; // 衝突した場合のダメージ
+                                playerHPRightTopX -= 2.85f;
+                                playerHPRightBottomX -= 2.84f;
+                                circle.active = false; // 衝突したら弾は消す
+                                playerColor = RED; // 自機がダメージを受けたら色を変える
+                            }
+                        }
+                    }
+                    // クールダウンのタイマーを更新
+                    bossBeamCooldown++;
 
-                bossTeleportTimer++;
-                if (bossTeleportTimer > 600 + randTimer) {
-                    bossPosX = rand() % (1200 - 300);  // ボスの幅200を考慮して位置を決定
-                    bossPosY = rand() % (500 - 250); // ボスの高さ200を考慮して位置を決定
-                    randTimer = rand() % (1000 - 100);
-                    bossTeleportTimer = 0;
-                }
+                    if (bossBeamCooldown > 600) {
+                        // 600フレーム経過したら、ランダムでビームを選択
+                        randomBeamIndex = rand() % 3;  // 0から6の間でランダムに選択
+                        bossBeamCooldown = 0; // クールダウンリセット
+                    }
+                    if (randomBeamIndex != -1) {
+                        // ランダムで選ばれたビームを発射する処理
+                        switch (randomBeamIndex) {
+                        case 0:
+                            // ビーム1の発射処理
+                            xBeamFlag = true;
+                            break;
+                        case 1:
+                            // ビーム2の発射処理
+                            xBeamFlag2 = true;
+                            break;
+                        case 2:
+                            // ビーム3の発射処理
+                            yBeamFlag = true;
+                            break;
+                        }
+                    }
 
-                ///////////////////////////////////////////////////////////
-                // リセット処理
-                if (xBeamFlagInProgress == true || xBeamFlag2InProgress == true || yBeamFlagInProgress == true) {
-                    // ビームフラグをリセット
-                    xBeamFlag = false;
-                    xBeamFlag2 = false;
-                    yBeamFlag = false;
+                    if (xBeamFlag) {
+                        beamTimer[0]++;
+                    }
+                    if (xBeamFlag2) {
+                        beamTimer[1]++;
+                    }
+                    if (yBeamFlag) {
+                        beamTimer[2]++;
+                    }
 
-                    // 位置を初期化
-                    memcpy(startLineX, initialStartLineX, sizeof(initialStartLineX));
-                    memcpy(startLineY, initialStartLineY, sizeof(initialStartLineY));
-                    memcpy(goalLineX, initialGoalLineX, sizeof(initialGoalLineX));
-                    memcpy(goalLineY, initialGoalLineY, sizeof(initialGoalLineY));
+                    // ビームの進行処理
+                    if (xBeamFlag && beamTimer[0] > 60) {
+                        goalLineX[0] += 40; goalLineX[1] += 40;
+                    }
+                    // ビームの進行処理
+                    if (xBeamFlag2 && beamTimer[1] > 60) {
+                        goalLineX[2] -= 40; goalLineX[3] -= 40;
+                    }
+                    if (yBeamFlag && beamTimer[2] > 60) {
+                        goalLineY[4] += 40;
+                        goalLineY[5] += 40;
+                        goalLineY[6] += 40;
+                    }
 
-                    // スピードを初期化
-                    beamSpeed[0] = 40.0f;
-                    beamSpeed[1] = 40.0f;
-                    beamSpeed[2] = 40.0f;
-                    beamSpeed[3] = 40.0f;
-                    beamSpeed[4] = 40.0f;
-                    beamSpeed[5] = 40.0f;
-                    beamSpeed[6] = 40.0f;
+                    // 端の位置制限
+                    if (goalLineX[0] >= 800) { goalLineX[0] = 1600; startLineX[0] += 50; }
+                    if (goalLineX[1] >= 800) { goalLineX[1] = 1600; startLineX[1] += 50; }
+                    if (goalLineX[2] <= 600) { goalLineX[2] = -120; startLineX[2] -= 50; }
+                    if (goalLineX[3] <= 600) { goalLineX[3] = -120; startLineX[3] -= 50; }
+                    if (goalLineY[4] >= 700) { goalLineY[4] = 940; startLineY[4] += 50; }
+                    if (goalLineY[5] >= 700) { goalLineY[5] = 940; startLineY[5] += 50; }
+                    if (goalLineY[6] >= 700) { goalLineY[6] = 940; startLineY[6] += 50; }
 
-                    xBeamFlagInProgress = false;
-                    xBeamFlag2InProgress = false;
-                    yBeamFlagInProgress = false;
-                }
+                    if (startLineX[0] >= 1400) {
+                        startLineX[0] = 1400;
+                        xBeamFlagInProgress = true;
+                        randomBeamIndex = -1;
+                        beamTimer[0] = 0;
+                    }
+                    if (startLineX[1] >= 1400) {
+                        startLineX[1] = 1400;
+                        xBeamFlagInProgress = true;
+                        randomBeamIndex = -1;
+                        beamTimer[0] = 0;
+                    }
+                    if (startLineX[2] <= 80) {
+                        startLineX[2] = 80;
+                        xBeamFlag2InProgress = true;
+                        randomBeamIndex = -1;
+                        beamTimer[1] = 0;
+                    }
+                    if (startLineX[3] <= 80) {
+                        startLineX[3] = 80;
+                        xBeamFlag2InProgress = true;
+                        randomBeamIndex = -1;
+                        beamTimer[1] = 0;
+                    }
+                    if (startLineY[4] >= 740) {
+                        startLineY[4] = 740;
+                        yBeamFlagInProgress = true;
+                        randomBeamIndex = -1;
+                        beamTimer[2] = 0;
+                    }
+                    if (startLineY[5] >= 740) {
+                        startLineY[5] = 740;
+                        yBeamFlagInProgress = true;
+                        randomBeamIndex = -1;
+                        beamTimer[2] = 0;
+                    }
+                    if (startLineY[6] >= 740) {
+                        startLineY[6] = 740;
+                        yBeamFlagInProgress = true;
+                        randomBeamIndex = -1;
+                        beamTimer[2] = 0;
+                    }
 
-                if (keys[DIK_R] && !preKeys[DIK_R]) {
-                    // ビームフラグをリセット
-                    xBeamFlag = false;
-                    xBeamFlag2 = false;
-                    yBeamFlag = false;
+                    //ボスの近接攻撃のクールタイム
+                    if (bossAttackTimeFlag) {
+                        bossAttackCoolTime++;
+                    }
+                    if (bossAttackCoolTime > 140) {
+                        bossAttackTimeFlag = false;
+                        bossAttackCoolTime = 0;
+                    }
+                    if (bossAttackTimeFlag == false) {
+                        ExecuteCloseRangeAttack(posX, posY, sizeX, sizeY, bossPosX, bossPosY, bossSizeX, bossSizeY);
+                    }
+                    bulletCooldown--;
+                    if (bossHP > 0) {
+                        ShootBullets(bossPosX, bossPosY, posX, posY, bossSizeX); // ボスから弾を発射
+                    }
+                    MoveBullets(posY, posX, sizeX, sizeY); // 弾を移動
+                    //敵の近接攻撃のクールダウン
+                    if (bossAttackCooldownTime > 0) {
+                        bossAttackCooldownTime--;
+                    }
 
-                    // 位置を初期化
-                    memcpy(startLineX, initialStartLineX, sizeof(initialStartLineX));
-                    memcpy(startLineY, initialStartLineY, sizeof(initialStartLineY));
-                    memcpy(goalLineX, initialGoalLineX, sizeof(initialGoalLineX));
-                    memcpy(goalLineY, initialGoalLineY, sizeof(initialGoalLineY));
+                    bossTeleportTimer++;
+                    if (bossTeleportTimer > 600 + randTimer) {
+                        bossPosX = rand() % (1200 - 300);  // ボスの幅200を考慮して位置を決定
+                        bossPosY = rand() % (500 - 250); // ボスの高さ200を考慮して位置を決定
+                        randTimer = rand() % (1000 - 100);
+                        bossTeleportTimer = 0;
+                    }
 
-                    // スピードを初期化
-                    beamSpeed[0] = 40.0f;
-                    beamSpeed[1] = 40.0f;
-                    beamSpeed[2] = 40.0f;
-                    beamSpeed[3] = 40.0f;
-                    beamSpeed[4] = 40.0f;
-                    beamSpeed[5] = 40.0f;
-                    beamSpeed[6] = 40.0f;
+                    ///////////////////////////////////////////////////////////
+                    // リセット処理
+                    if (xBeamFlagInProgress == true || xBeamFlag2InProgress == true || yBeamFlagInProgress == true) {
+                        // ビームフラグをリセット
+                        xBeamFlag = false;
+                        xBeamFlag2 = false;
+                        yBeamFlag = false;
 
-                    playerHP = 1000;
-                    bossHP = 20;
-                }
+                        // 位置を初期化
+                        memcpy(startLineX, initialStartLineX, sizeof(initialStartLineX));
+                        memcpy(startLineY, initialStartLineY, sizeof(initialStartLineY));
+                        memcpy(goalLineX, initialGoalLineX, sizeof(initialGoalLineX));
+                        memcpy(goalLineY, initialGoalLineY, sizeof(initialGoalLineY));
 
-                if (playerHP <= 0) {
-                    scene = GAME_OVER;
-                }
-                if (bossHP <= 0) {
-                    scene = GAME_CLEAR;
+                        // スピードを初期化
+                        beamSpeed[0] = 40.0f;
+                        beamSpeed[1] = 40.0f;
+                        beamSpeed[2] = 40.0f;
+                        beamSpeed[3] = 40.0f;
+                        beamSpeed[4] = 40.0f;
+                        beamSpeed[5] = 40.0f;
+                        beamSpeed[6] = 40.0f;
+
+                        xBeamFlagInProgress = false;
+                        xBeamFlag2InProgress = false;
+                        yBeamFlagInProgress = false;
+                    }
+
+                    if (keys[DIK_R] && !preKeys[DIK_R]) {
+                        // ビームフラグをリセット
+                        xBeamFlag = false;
+                        xBeamFlag2 = false;
+                        yBeamFlag = false;
+
+                        // 位置を初期化
+                        memcpy(startLineX, initialStartLineX, sizeof(initialStartLineX));
+                        memcpy(startLineY, initialStartLineY, sizeof(initialStartLineY));
+                        memcpy(goalLineX, initialGoalLineX, sizeof(initialGoalLineX));
+                        memcpy(goalLineY, initialGoalLineY, sizeof(initialGoalLineY));
+
+                        // スピードを初期化
+                        beamSpeed[0] = 40.0f;
+                        beamSpeed[1] = 40.0f;
+                        beamSpeed[2] = 40.0f;
+                        beamSpeed[3] = 40.0f;
+                        beamSpeed[4] = 40.0f;
+                        beamSpeed[5] = 40.0f;
+                        beamSpeed[6] = 40.0f;
+
+                        playerHP = 1000;
+                        bossHP = 20;
+                    }
+
+                    if (playerHP <= 0) {
+                        scene = GAME_OVER;
+                    }
+                    if (bossHP <= 0) {
+                        scene = GAME_CLEAR;
+                    }
                 }
             }
             // ボスの座標
@@ -910,14 +913,14 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
             UpdateBlackParticles();
             break;
         case GAME_CLEAR:
-            if (keys[DIK_P] && preKeys[DIK_P] == 0) {
+            if (Novice::IsTriggerMouse(0)) {
                 playerHP = 1000;
                 bossHP = 20;
                 scene = TITLE;
             }
             break;
         case GAME_OVER:
-            if (keys[DIK_P] && preKeys[DIK_P] == 0) {
+            if (Novice::IsTriggerMouse(0)) {
                 playerHP = 1000;
                 bossHP = 20;
                 scene = TITLE;
@@ -949,6 +952,8 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
                 for (int i = 0; i < 7; ++i) {
                     if (CheckBeamCollisionWithPlayer(posX, posY, sizeX, sizeY, startLineX[i], startLineY[i], goalLineX[i], goalLineY[i])) {
                         playerHP -= 10;  // 自機がビームに当たった場合のダメージ
+                        playerHPRightTopX -= 2.84f;
+                        playerHPRightBottomX -= 2.84f;
                         playerColor = RED;
                     }
                 }
@@ -1074,6 +1079,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
             Novice::DrawBox(0, 600, 1600, 200, 0.0f, 0xb8860b, kFillModeSolid);
             
             //プレイヤーのHPゲージ(仮置き)
+            Novice::DrawQuad(playerHPLeftTopX, playerHPLeftTopY, (int)playerHPRightTopX, playerHPRightTopY, playerHPLeftBottomX, playerHPLeftBottomY, (int)playerHPRightBottomX, playerHPRightBottomY, 0, 0, 1, 1, playerHPGrh, GREEN);
             Novice::DrawSprite(100, 750, playerGauge, 1.0f, 1.0f, 0.0f, WHITE);
 
             // パーティクル描画
@@ -1109,15 +1115,14 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
                             static_cast<int>(circle.y) - 16, blackBall, 1, 1, .0f, WHITE);
                     }
                 }
-                //ボスゲージ（仮置き）
-                Novice::DrawQuad(bossHPLeftTopX, bossHPLeftTopY, bossHPRightTopX, bossHPRightTopY, bossHPLeftBottomX, bossHPLeftBottomY, bossHPRightBottomX, bossHPRightBottomY, 0, 0, 1, 1, bossHPGrh, WHITE);
+                //ボスゲージ
+                Novice::DrawQuad(bossHPLeftTopX, bossHPLeftTopY, (int)bossHPRightTopX, bossHPRightTopY, bossHPLeftBottomX, bossHPLeftBottomY, (int)bossHPRightBottomX, bossHPRightBottomY, 0, 0, 1, 1, bossHPGrh, RED);
                 //ボスのHPバー
-                Novice::DrawSprite(450, 30, bossGauge, 1.0f, 1.0f, 0.0f, WHITE);
+                Novice::DrawSprite(450, 30, bossGauge, 1.0f, 1.0f, 0.0f, RED);
             }
 
             // 自機の残像を描画（透明度を反映）
             for (int i = 0; i < playerTrail.size(); ++i) {
-                // 透明度をアルファ値に変換（0.0～1.0 → 0x00～0xFF）
                 int alphaValue = static_cast<int>(playerTrail[i].alpha * 255.0f);
                 unsigned int colorWithAlpha = (alphaValue << 24) | 0x10e6e6fa; // 透明度を上位8ビットに設定
                 if (keys[DIK_A] && !keys[DIK_D]) {
@@ -1171,7 +1176,6 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
                 }
             }
 
-            //DrawBeams(startLineX, startLineY, goalLineX, goalLineY, BLACK);
             bossColor = WHITE;
 
             Novice::ScreenPrintf(20, 20, "bossHP : %d", bossHP);
