@@ -6,11 +6,7 @@
 const char kWindowTitle[] = "TD1BossBattle";
 const float M_PI = 3.14159265358979323846f;
 
-
 int isBGMPlaying = true;
-
-
-
 enum Scene
 {
     TITLE,
@@ -453,6 +449,20 @@ void MoveBullets(int playerPosY, int playerPosX, int playerSizeX, int playerSize
         }
     }
 }
+void ResetBullets() {
+    const int initialBulletPosX = 0; // 弾の初期X座標（必要なら変更）
+    const int initialBulletPosY = 0; // 弾の初期Y座標（必要なら変更）
+
+    for (int i = 0; i < numOfBullets; ++i) {
+        bulletPosX[i] = initialBulletPosX; // 弾のX座標を初期化
+        bulletPosY[i] = initialBulletPosY; // 弾のY座標を初期化
+        bulletActive[i] = false;          // 弾の発射状態を無効化
+        bulletTimer[i] = 0;               // タイマーをリセット
+    }
+
+    bulletSpeed = 2.0f;  // 弾の移動速度をリセット（必要なら変更）
+    bulletCooldown = 0;  // 弾の発射クールタイムをリセット
+}
 
 // Windowsアプリでのエントリーポイント(main関数)
 int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
@@ -576,7 +586,6 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
     //int playHandle = -1;
 
     int playerImageFrameCount = 0;
-    //int playerAttackImageFrameCount = 0;
     int playerWaitImageFrameCount = 0;
     int bossImageFrameCount = 0;
     int sphereImageFrameCount = 0;
@@ -595,6 +604,8 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
     int beamPosX[7] = { 50, 50, 1550, 1550, 200, 750, 1350 };
     int beamPosY[7] = { 270, 800, 270, 800, 50, 50, 50 };
+    int initializeBeamPosX[7] = { 50, 50, 1550, 1550, 200, 750, 1350 };
+    int initializeBeamPosY[7] = { 270, 800, 270, 800, 50, 50, 50 };
     int beamSize = 75;
     int beamTimer[3] = { 0 };
 
@@ -632,6 +643,90 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
         switch (scene)
         {
         case TITLE:
+            playerHP = 1000;
+            bossAttackCoolTime = 0;
+            bossAttackTimeFlag = false;
+            bossAttackCooldownTime = 0;
+            bossAttackDelay = 120;
+            posX = 500;
+            posY = groundHeight - 120;
+            playerColor = WHITE;
+            bossColor = WHITE;
+            bossHP = 200;
+            bossHPLeftTopX = 503;
+            bossHPLeftTopY = 45;
+            bossHPLeftBottomX = 462;
+            bossHPLeftBottomY = 105;
+            bossHPRightTopX = 1079.0f;
+            bossHPRightTopY = 45;
+            bossHPRightBottomX = 1037.0f;
+            bossHPRightBottomY = 105;
+            playerHPLeftTopX = 136;
+            playerHPLeftTopY = 780;
+            playerHPLeftBottomX = 102;
+            playerHPLeftBottomY = 846;
+            playerHPRightTopX = 420.0f;
+            playerHPRightTopY = 780;
+            playerHPRightBottomX = 387.0f;
+            playerHPRightBottomY = 846;
+            xBeamFlag = false;
+            xBeamFlag2 = false;
+            yBeamFlag = false;
+            for (int i = 0; i < 7; i++) {
+                startLineX[i] = initialStartLineX[i];
+                startLineY[i] = initialStartLineY[i];
+                goalLineX[i] = initialGoalLineX[i];
+                goalLineY[i] = initialGoalLineY[i];
+                beamSpeed[i] = { 40.0f };
+            }
+            bossBeamCooldown = 0;
+            randomBeamIndex = -1;
+            xBeamFlagInProgress = false;
+            xBeamFlag2InProgress = false;
+            yBeamFlagInProgress = false;
+            bossPosX = 1000;
+            bossPosY = -300;
+            bossTeleportTimer = 0;
+            randTimer = 0;
+            bossCircularAttackTimer = 0;
+            bossCircularAttackFlag = false;
+            bossCircularAttackCooldown = 1400;
+            isFirstLaunch = true;
+            bossCenterX = 0;
+            bossCenterY = 0;
+            for (int i = 0; i < 7; ++i) {
+                // ボックスの中心位置を設定
+                boxPosX[i] = startLineX[i] - boxSizeX[i] / 2;
+                boxPosY[i] = startLineY[i] - boxSizeY[i] / 2;
+            }
+            playerImageFrameCount = 0;
+            playerWaitImageFrameCount = 0;
+            bossImageFrameCount = 0;
+            sphereImageFrameCount = 0;
+            isTurnLeft = false;
+            isTurnRight = true;
+            bossImageChange = false;
+            homingBulletTimer = 0;
+            bossChangeFrameCount = 0;
+            isJumping = false;
+            jumpVelocity = 0;
+            for (int i = 0; i < 7; i++) {
+                beamPosX[i] = initializeBeamPosX[i];
+                beamPosY[i] = initializeBeamPosY[i];
+            }
+            for (int i = 0; i < 3; i++) {
+                beamTimer[i] = { 0 };
+            }
+            battleStart = false;
+            randX = 0;
+            randY = 0;
+            battleStopFlag = false;
+            for (auto& circle : circles) {
+                if (circle.active) {
+                    circle.active = false;
+                }
+            }
+            ResetBullets();
             if (Novice::IsTriggerMouse(0)) {
                 scene = GAME;
             }
