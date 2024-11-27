@@ -349,50 +349,50 @@ void CheckEnemyAttackRangeAndExecute(int playerX, int playerY, int enemyX, int e
     }
 }
 
-//敵の近接攻撃
-void ExecuteCloseRangeAttack(int playerPosX, int playerPosY, int playerSizeX, int playerSizeY, int bossPosX, int bossPosY, int bossSizeX, int bossSizeY) {
-    // プレイヤーの中心座標を計算
-    int playerCenterX = playerPosX + playerSizeX / 2;
-    int playerCenterY = playerPosY + playerSizeY / 2;
-
-    // ボスの中心座標を計算
-    int bossCenterX = bossPosX + bossSizeX / 2;
-    int bossCenterY = bossPosY + bossSizeY / 2;
-
-    // プレイヤーとボスの距離が400ピクセル以内かどうかチェック
-    if (std::abs(bossCenterX - playerCenterX) <= 300 && std::abs(bossCenterY - playerCenterY) <= 150) {
-        if (bossAttackCooldownTime == 0) {
-            if (playerCenterX < bossCenterX) {
-                // プレイヤーがボスの左側にいる場合、赤い攻撃ボックスを描画
-                Novice::DrawBox(bossCenterX - bossSizeX / 2 - 70, bossCenterY - bossSizeY / 2, 70, bossSizeY, 0.0f, RED, kFillModeSolid);
-                // プレイヤーがそのボックスと衝突する場合、HPを減らす
-                if (playerPosX + playerSizeX >= bossCenterX - bossSizeX / 2 - 70 && playerPosX <= bossCenterX - bossSizeX / 2 - 70 + 70) {
-                    if (playerPosY + playerSizeY >= bossCenterY - bossSizeY / 2 && playerPosY <= bossCenterY + bossSizeY / 2) {
-                        playerHP -= 10; // ダメージ処理
-                        playerHPRightTopX -= 2.84f;
-                        playerHPRightBottomX -= 2.84f;
-                        playerColor = RED;
-                    }
-                }
-            }
-            else {
-                // プレイヤーがボスの右側にいる場合、青い攻撃ボックスを描画
-                Novice::DrawBox(bossCenterX + bossSizeX / 2 + 10, bossCenterY - bossSizeY / 2, 70, bossSizeY, 0.0f, BLUE, kFillModeSolid);
-                // プレイヤーがそのボックスと衝突する場合、HPを減らす
-                if (playerPosX + playerSizeX >= bossCenterX + bossSizeX / 2 + 10 && playerPosX <= bossCenterX + bossSizeX / 2 + 10 + 70) {
-                    if (playerPosY + playerSizeY >= bossCenterY - bossSizeY / 2 && playerPosY <= bossCenterY + bossSizeY / 2) {
-                        playerHP -= 10; // ダメージ処理
-                        playerHPRightTopX -= 2.84f;
-                        playerHPRightBottomX -= 2.84f;
-                        playerColor = RED;
-                    }
-                }
-            }
-
-            bossAttackCooldownTime = bossAttackDelay;
-        }
-    }
-}
+////敵の近接攻撃
+//void ExecuteCloseRangeAttack(int playerPosX, int playerPosY, int playerSizeX, int playerSizeY, int bossPosX, int bossPosY, int bossSizeX, int bossSizeY) {
+//    // プレイヤーの中心座標を計算
+//    int playerCenterX = playerPosX + playerSizeX / 2;
+//    int playerCenterY = playerPosY + playerSizeY / 2;
+//
+//    // ボスの中心座標を計算
+//    int bossCenterX = bossPosX + bossSizeX / 2;
+//    int bossCenterY = bossPosY + bossSizeY / 2;
+//
+//    // プレイヤーとボスの距離が400ピクセル以内かどうかチェック
+//    if (std::abs(bossCenterX - playerCenterX) <= 300 && std::abs(bossCenterY - playerCenterY) <= 150) {
+//        if (bossAttackCooldownTime == 0) {
+//            if (playerCenterX < bossCenterX) {
+//                // プレイヤーがボスの左側にいる場合、赤い攻撃ボックスを描画
+//                Novice::DrawBox(bossCenterX - bossSizeX / 2 - 70, bossCenterY - bossSizeY / 2, 70, bossSizeY, 0.0f, RED, kFillModeSolid);
+//                // プレイヤーがそのボックスと衝突する場合、HPを減らす
+//                if (playerPosX + playerSizeX >= bossCenterX - bossSizeX / 2 - 70 && playerPosX <= bossCenterX - bossSizeX / 2 - 70 + 70) {
+//                    if (playerPosY + playerSizeY >= bossCenterY - bossSizeY / 2 && playerPosY <= bossCenterY + bossSizeY / 2) {
+//                        playerHP -= 10; // ダメージ処理
+//                        playerHPRightTopX -= 2.84f;
+//                        playerHPRightBottomX -= 2.84f;
+//                        playerColor = RED;
+//                    }
+//                }
+//            }
+//            else {
+//                // プレイヤーがボスの右側にいる場合、青い攻撃ボックスを描画
+//                Novice::DrawBox(bossCenterX + bossSizeX / 2 + 10, bossCenterY - bossSizeY / 2, 70, bossSizeY, 0.0f, BLUE, kFillModeSolid);
+//                // プレイヤーがそのボックスと衝突する場合、HPを減らす
+//                if (playerPosX + playerSizeX >= bossCenterX + bossSizeX / 2 + 10 && playerPosX <= bossCenterX + bossSizeX / 2 + 10 + 70) {
+//                    if (playerPosY + playerSizeY >= bossCenterY - bossSizeY / 2 && playerPosY <= bossCenterY + bossSizeY / 2) {
+//                        playerHP -= 10; // ダメージ処理
+//                        playerHPRightTopX -= 2.84f;
+//                        playerHPRightBottomX -= 2.84f;
+//                        playerColor = RED;
+//                    }
+//                }
+//            }
+//
+//            bossAttackCooldownTime = bossAttackDelay;
+//        }
+//    }
+//}
 
 const int numOfBullets = 10; // 円の数
 float bulletPosX[numOfBullets];
@@ -493,9 +493,6 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
     const int initialGoalLineY[7] = { 270, 800, 270, 800, -50, -50, -50 };
     int bossBeamCooldown = 0; // ビームのクールダウンタイマー
     int randomBeamIndex = -1; // 発射するビームのインデックス
-    bool xBeamFlagInProgress = false;  // x方向ビームの進行状態
-    bool xBeamFlag2InProgress = false; // 反対方向xビームの進行状態
-    bool yBeamFlagInProgress = false;  // y方向ビームの進行状態
 
     int bossPosX = 1000;
     int bossPosY = -300;
@@ -644,8 +641,8 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
         {
         case TITLE:
             playerHP = 1000;
-            bossAttackCoolTime = 0;
-            bossAttackTimeFlag = false;
+            //bossAttackCoolTime = 0;
+            //bossAttackTimeFlag = false;
             bossAttackCooldownTime = 0;
             bossAttackDelay = 120;
             posX = 500;
@@ -681,9 +678,6 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
             }
             bossBeamCooldown = 0;
             randomBeamIndex = -1;
-            xBeamFlagInProgress = false;
-            xBeamFlag2InProgress = false;
-            yBeamFlagInProgress = false;
             bossPosX = 1000;
             bossPosY = -300;
             bossTeleportTimer = 0;
@@ -855,6 +849,17 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
                         // 600フレーム経過したら、ランダムでビームを選択
                         randomBeamIndex = rand() % 3;  // 0から6の間でランダムに選択
                         bossBeamCooldown = 0; // クールダウンリセット
+                        for (int i = 0; i < 7; i++) {
+                            startLineX[i] = initialStartLineX[i];
+                            startLineY[i] = initialStartLineY[i];
+                            goalLineX[i] = initialGoalLineX[i];
+                            goalLineY[i] = initialGoalLineY[i];
+                            beamSpeed[i] = { 40.0f };
+                        }
+                        for (int i = 0; i < 7; i++) {
+                            beamPosX[i] = initializeBeamPosX[i];
+                            beamPosY[i] = initializeBeamPosY[i];
+                        }
                     }
                     if (randomBeamIndex != -1) {
                         // ランダムで選ばれたビームを発射する処理
@@ -907,60 +912,60 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
                     if (goalLineY[5] >= 700) { goalLineY[5] = 940; startLineY[5] += 50; }
                     if (goalLineY[6] >= 700) { goalLineY[6] = 940; startLineY[6] += 50; }
 
-                    if (startLineX[0] >= 1400) {
-                        startLineX[0] = 1400;
-                        xBeamFlagInProgress = true;
+                    if (startLineX[0] >= 1600) {
+                        startLineX[0] = 1600;
+                        xBeamFlag = false;
                         randomBeamIndex = -1;
                         beamTimer[0] = 0;
                     }
-                    if (startLineX[1] >= 1400) {
-                        startLineX[1] = 1400;
-                        xBeamFlagInProgress = true;
+                    if (startLineX[1] >= 1600) {
+                        startLineX[1] = 1600;
+                        xBeamFlag = false;
                         randomBeamIndex = -1;
                         beamTimer[0] = 0;
                     }
-                    if (startLineX[2] <= 80) {
-                        startLineX[2] = 80;
-                        xBeamFlag2InProgress = true;
+                    if (startLineX[2] <= -80) {
+                        startLineX[2] = -80;
+                        xBeamFlag2 = false;
                         randomBeamIndex = -1;
                         beamTimer[1] = 0;
                     }
-                    if (startLineX[3] <= 80) {
-                        startLineX[3] = 80;
-                        xBeamFlag2InProgress = true;
+                    if (startLineX[3] <= -80) {
+                        startLineX[3] = -80;
+                        xBeamFlag2 = false;
                         randomBeamIndex = -1;
                         beamTimer[1] = 0;
                     }
-                    if (startLineY[4] >= 740) {
-                        startLineY[4] = 740;
-                        yBeamFlagInProgress = true;
+                    if (startLineY[4] >= 900) {
+                        startLineY[4] = 1000;
+                        yBeamFlag = false;
                         randomBeamIndex = -1;
                         beamTimer[2] = 0;
                     }
-                    if (startLineY[5] >= 740) {
-                        startLineY[5] = 740;
-                        yBeamFlagInProgress = true;
+                    if (startLineY[5] >= 900) {
+                        startLineY[5] = 1000;
+                        yBeamFlag = false;
                         randomBeamIndex = -1;
                         beamTimer[2] = 0;
                     }
-                    if (startLineY[6] >= 740) {
-                        startLineY[6] = 740;
-                        yBeamFlagInProgress = true;
+                    if (startLineY[6] >= 900) {
+                        startLineY[6] = 1000;
+                        yBeamFlag = false;
                         randomBeamIndex = -1;
                         beamTimer[2] = 0;
                     }
 
-                    //ボスの近接攻撃のクールタイム
-                    if (bossAttackTimeFlag) {
-                        bossAttackCoolTime++;
-                    }
-                    if (bossAttackCoolTime > 140) {
-                        bossAttackTimeFlag = false;
-                        bossAttackCoolTime = 0;
-                    }
-                    if (bossAttackTimeFlag == false) {
-                        ExecuteCloseRangeAttack(posX, posY, sizeX, sizeY, bossPosX, bossPosY, bossSizeX, bossSizeY);
-                    }
+                    ////ボスの近接攻撃のクールタイム
+                    //if (bossAttackTimeFlag) {
+                    //    bossAttackCoolTime++;
+                    //}
+                    //if (bossAttackCoolTime > 140) {
+                    //    bossAttackTimeFlag = false;
+                    //    bossAttackCoolTime = 0;
+                    //}
+                    //if (bossAttackTimeFlag == false) {
+                    //    ExecuteCloseRangeAttack(posX, posY, sizeX, sizeY, bossPosX, bossPosY, bossSizeX, bossSizeY);
+                    //}
                     bulletCooldown--;
                     if (bossHP > 0) {
                         ShootBullets(bossPosX, bossPosY, posX, posY, bossSizeX); // ボスから弾を発射
