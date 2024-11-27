@@ -7,7 +7,7 @@ const char kWindowTitle[] = "TD1BossBattle";
 const float M_PI = 3.14159265358979323846f;
 
 
-
+int isBGMPlaying = true;
 
 
 
@@ -565,6 +565,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
     //int slash = Novice::LoadTexture("./Resources/slash.png");
     int title = Novice::LoadTexture("./Resources/title.png");
     int gameover = Novice::LoadTexture("./Resources/zannnenn.png");
+    int gameclear = Novice::LoadTexture("./Resources/win.png");
     int homingBullet1 = Novice::LoadTexture("./Resources/tuibi1.png");
     int homingBullet2 = Novice::LoadTexture("./Resources/tuibi2.png");
     int homingBullet3 = Novice::LoadTexture("./Resources/tuibi3.png");
@@ -1271,6 +1272,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
             Novice::ScreenPrintf(20, 120, "%d", bossCircularAttackTimer);
             break;
         case GAME_CLEAR:
+            Novice::DrawSprite(0, 0, gameclear, 1.2f, 1.2f, 0.0f, WHITE);
             break;
         case GAME_OVER:
             Novice::DrawSprite(0, 0, gameover, 1.2f, 1.2f, 0.0f, WHITE);
@@ -1287,6 +1289,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
         // ESCキーが押されたらループを抜ける
         if (preKeys[DIK_ESCAPE] == 0 && keys[DIK_ESCAPE] != 0) {
+            Novice::StopAudio(bgm);
             break;
         }
     }
