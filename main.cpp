@@ -171,7 +171,7 @@ const int MAX_TRAIL_LENGTH = 5;    // 残像の長さ（過去何フレーム分
 
 // イージング関数（EaseOut）
 float EaseOut(float t) {
-    return t * (12.0f - t);  // tが0から1の間で滑らかに減少
+    return t * (1.0f - t);  // tが0から1の間で滑らかに減少
 }
 // 自作の max 関数
 float my_max(float a, float b) {
@@ -720,7 +720,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
                         if (circle.active) {
                             circle.x += circle.vx;
                             circle.y += circle.vy;
-                            if (circleTimer > 7) {
+                            if (circleTimer > 10) {
                                 circle.active = false;
                                 circleTimer = 0;
                             }
