@@ -648,6 +648,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
         switch (scene)
         {
         case TITLE:
+            isBossChange = false;
             playerHP = 1000;
             //bossAttackCoolTime = 0;
             //bossAttackTimeFlag = false;
