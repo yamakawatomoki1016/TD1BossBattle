@@ -1161,7 +1161,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
                 }
 
                 //自機の攻撃
-                if (Novice::IsTriggerMouse(0)) {
+                if (Novice::IsTriggerMouse(0) && battleStopFlag == false) {
                     DrawSlash(posX + sizeX / 2, posY + sizeY / 2, mouseX, mouseY, WHITE, 60.0f, bossPosX, bossPosY, bossSizeX, bossSizeY);
                     Novice::PlayAudio(slashSounds, 0, 0.5f);
                     //プレイヤーが攻撃したときのモーション
