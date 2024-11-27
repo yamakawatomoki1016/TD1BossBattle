@@ -653,9 +653,9 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
             if (battleStart) {
 
                 if (battleStopFlag == false) {
-                    if (!Novice::IsPlayingAudio(playHandle) || playHandle == -1) {
+                    /*if (!Novice::IsPlayingAudio(playHandle) || playHandle == -1) {
                         playHandle = Novice::PlayAudio(bgm, 1, 0.5);
-                    }
+                    }*/
                     randX = 0;
                     randY = 0;
                     // 横移動
