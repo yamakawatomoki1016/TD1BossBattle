@@ -690,7 +690,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
                     }
 
                     //円形の攻撃をしてくる
-                    if (bossHP <= 199) {
+                    if (bossHP <= 99) {
                         if (isFirstLaunch) {
                             // 最初の発射
                             LaunchCircles(static_cast<float>(bossPosX) + bossSizeX / 2, static_cast<float>(bossPosY) + bossSizeY / 2);
