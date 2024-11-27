@@ -567,7 +567,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
     //音の読み込み
     int bgm = Novice::LoadAudio("./Resources/maou_game_boss05.mp3");
     int slashSounds = Novice::LoadAudio("./Resources/maou_se_battle03.mp3");
-    //int playHundle = -1;
+    int playHandle = -1;
 
     int playerImageFrameCount = 0;
     //int playerAttackImageFrameCount = 0;
@@ -640,13 +640,16 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
             if (bossPosY >= 500 && battleStart == false) {
                 battleStart = true;
             }
-            if (bossHP == 99) {
+            if (bossHP == 100) {
                 battleStopFlag = true;
             }
 
             if (battleStart) {
+
                 if (battleStopFlag == false) {
-                    Novice::PlayAudio(bgm, 1, 0.5f);
+                    if (!Novice::IsPlayingAudio(playHandle) || playHandle == -1) {
+                        playHandle = Novice::PlayAudio(bgm, 1, 0.5);
+                    }
                     randX = 0;
                     randY = 0;
                     // 横移動
