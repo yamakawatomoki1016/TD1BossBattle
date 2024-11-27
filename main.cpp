@@ -6,6 +6,11 @@
 const char kWindowTitle[] = "TD1BossBattle";
 const float M_PI = 3.14159265358979323846f;
 
+
+int isBGMPlaying = true;
+
+
+
 enum Scene
 {
     TITLE,
@@ -166,7 +171,7 @@ const int MAX_TRAIL_LENGTH = 5;    // 残像の長さ（過去何フレーム分
 
 // イージング関数（EaseOut）
 float EaseOut(float t) {
-    return t * (12.0f - t);  // tが0から1の間で滑らかに減少
+    return t * (1.0f - t);  // tが0から1の間で滑らかに減少
 }
 // 自作の max 関数
 float my_max(float a, float b) {
@@ -560,6 +565,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
     //int slash = Novice::LoadTexture("./Resources/slash.png");
     int title = Novice::LoadTexture("./Resources/title.png");
     int gameover = Novice::LoadTexture("./Resources/zannnenn.png");
+    int gameclear = Novice::LoadTexture("./Resources/win.png");
     int homingBullet1 = Novice::LoadTexture("./Resources/tuibi1.png");
     int homingBullet2 = Novice::LoadTexture("./Resources/tuibi2.png");
     int homingBullet3 = Novice::LoadTexture("./Resources/tuibi3.png");
@@ -687,7 +693,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
                     }
 
                     //円形の攻撃をしてくる
-                    if (bossHP <= 199) {
+                    if (bossHP <= 99) {
                         if (isFirstLaunch) {
                             // 最初の発射
                             LaunchCircles(static_cast<float>(bossPosX) + bossSizeX / 2, static_cast<float>(bossPosY) + bossSizeY / 2);
@@ -717,7 +723,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
                         if (circle.active) {
                             circle.x += circle.vx;
                             circle.y += circle.vy;
-                            if (circleTimer > 7) {
+                            if (circleTimer > 10) {
                                 circle.active = false;
                                 circleTimer = 0;
                             }
@@ -970,6 +976,20 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
         ///
         /// 描画処理ここから
         ///
+
+
+        if (!Novice::IsPlayingAudio(bgm))
+        {
+            Novice::PlayAudio(bgm, 1, 0.5f);
+          
+        }
+
+
+
+
+
+
+
 
         switch (scene)
         {
@@ -1255,6 +1275,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
             Novice::ScreenPrintf(20, 120, "%d", bossCircularAttackTimer);
             break;
         case GAME_CLEAR:
+            Novice::DrawSprite(0, 0, gameclear, 1.2f, 1.2f, 0.0f, WHITE);
             break;
         case GAME_OVER:
             Novice::DrawSprite(0, 0, gameover, 1.2f, 1.2f, 0.0f, WHITE);
@@ -1271,6 +1292,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
         // ESCキーが押されたらループを抜ける
         if (preKeys[DIK_ESCAPE] == 0 && keys[DIK_ESCAPE] != 0) {
+            Novice::StopAudio(bgm);
             break;
         }
     }
