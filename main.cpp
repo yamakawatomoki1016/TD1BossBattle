@@ -573,7 +573,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
     //音の読み込み
     int bgm = Novice::LoadAudio("./Resources/maou_game_boss05.mp3");
     int slashSounds = Novice::LoadAudio("./Resources/maou_se_battle03.mp3");
-    int playHandle = -1;
+    //int playHandle = -1;
 
     int playerImageFrameCount = 0;
     //int playerAttackImageFrameCount = 0;
