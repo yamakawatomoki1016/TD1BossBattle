@@ -6,6 +6,11 @@
 const char kWindowTitle[] = "TD1BossBattle";
 const float M_PI = 3.14159265358979323846f;
 
+
+
+
+
+
 enum Scene
 {
     TITLE,
@@ -646,7 +651,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
             if (battleStart) {
                 if (battleStopFlag == false) {
-                    Novice::PlayAudio(bgm, 1, 0.5f);
+                    
                     randX = 0;
                     randY = 0;
                     // 横移動
@@ -967,6 +972,20 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
         ///
         /// 描画処理ここから
         ///
+
+
+        if (!Novice::IsPlayingAudio(bgm))
+        {
+            Novice::PlayAudio(bgm, 1, 0.5f);
+          
+        }
+
+
+
+
+
+
+
 
         switch (scene)
         {
