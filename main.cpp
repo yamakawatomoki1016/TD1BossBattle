@@ -314,7 +314,7 @@ void DrawSlash(int startX, int startY, int targetX, int targetY, unsigned int co
     // 当たり判定
     if (bossHP > 0) {
         if (CheckCollision(leftTopX, leftTopY, rightTopX, rightTopY, leftBottomX, leftBottomY, rightBottomX, rightBottomY, bossPosX, bossPosY, bossSizeX, bossSizeY)) {
-            bossHP -= 10;
+            bossHP -= 1;
             bossHPRightTopX -= 2.88f;
             bossHPRightBottomX -= 2.88f;
             bossColor = RED; // 当たった瞬間だけ赤に変更
@@ -1304,12 +1304,12 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
             bossColor = WHITE;
 
-            Novice::ScreenPrintf(20, 20, "bossHP : %d", bossHP);
+            /*Novice::ScreenPrintf(20, 20, "bossHP : %d", bossHP);
             Novice::ScreenPrintf(20, 40, "playerHP : %d", playerHP);
             Novice::ScreenPrintf(20, 100, "beamTimer : %d",bossBeamCooldown);
             Novice::ScreenPrintf(20, 60, "%d", bossAttackCoolTime);
             Novice::ScreenPrintf(20, 80, "%d", bossImageChange);
-            Novice::ScreenPrintf(20, 120, "%d", bossCircularAttackTimer);
+            Novice::ScreenPrintf(20, 120, "%d", bossCircularAttackTimer);*/
             break;
         case GAME_CLEAR:
             Novice::DrawSprite(0, 0, gameclear, 1.2f, 1.2f, 0.0f, WHITE);
