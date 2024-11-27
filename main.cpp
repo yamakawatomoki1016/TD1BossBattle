@@ -994,7 +994,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
         switch (scene)
         {
         case TITLE:
-            Novice::DrawSprite(0, 0, title, 1.2f, 1.2f, 0.0f, WHITE);
+            Novice::DrawSprite(0, 0, title, 0.96f, 0.96f, 0.0f, WHITE);
             break;
         case GAME:
             //背景描画
