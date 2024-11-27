@@ -314,7 +314,7 @@ void DrawSlash(int startX, int startY, int targetX, int targetY, unsigned int co
     // 当たり判定
     if (bossHP > 0) {
         if (CheckCollision(leftTopX, leftTopY, rightTopX, rightTopY, leftBottomX, leftBottomY, rightBottomX, rightBottomY, bossPosX, bossPosY, bossSizeX, bossSizeY)) {
-            bossHP -= 1;
+            bossHP -= 10;
             bossHPRightTopX -= 2.88f;
             bossHPRightBottomX -= 2.88f;
             bossColor = RED; // 当たった瞬間だけ赤に変更
@@ -726,6 +726,10 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
                     circle.active = false;
                 }
             }
+            for (int i = 0; i < playerTrail.size(); ++i) {
+                playerTrail[i].x = (float)posX;
+                playerTrail[i].y = (float)posY;
+            }
             ResetBullets();
             if (Novice::IsTriggerMouse(0)) {
                 scene = GAME;
@@ -975,59 +979,6 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
                         bossTeleportTimer = 0;
                     }
 
-                    ///////////////////////////////////////////////////////////
-                    // リセット処理
-                    if (xBeamFlagInProgress == true || xBeamFlag2InProgress == true || yBeamFlagInProgress == true) {
-                        // ビームフラグをリセット
-                        xBeamFlag = false;
-                        xBeamFlag2 = false;
-                        yBeamFlag = false;
-
-                        // 位置を初期化
-                        memcpy(startLineX, initialStartLineX, sizeof(initialStartLineX));
-                        memcpy(startLineY, initialStartLineY, sizeof(initialStartLineY));
-                        memcpy(goalLineX, initialGoalLineX, sizeof(initialGoalLineX));
-                        memcpy(goalLineY, initialGoalLineY, sizeof(initialGoalLineY));
-
-                        // スピードを初期化
-                        beamSpeed[0] = 40.0f;
-                        beamSpeed[1] = 40.0f;
-                        beamSpeed[2] = 40.0f;
-                        beamSpeed[3] = 40.0f;
-                        beamSpeed[4] = 40.0f;
-                        beamSpeed[5] = 40.0f;
-                        beamSpeed[6] = 40.0f;
-
-                        xBeamFlagInProgress = false;
-                        xBeamFlag2InProgress = false;
-                        yBeamFlagInProgress = false;
-                    }
-
-                    if (keys[DIK_R] && !preKeys[DIK_R]) {
-                        // ビームフラグをリセット
-                        xBeamFlag = false;
-                        xBeamFlag2 = false;
-                        yBeamFlag = false;
-
-                        // 位置を初期化
-                        memcpy(startLineX, initialStartLineX, sizeof(initialStartLineX));
-                        memcpy(startLineY, initialStartLineY, sizeof(initialStartLineY));
-                        memcpy(goalLineX, initialGoalLineX, sizeof(initialGoalLineX));
-                        memcpy(goalLineY, initialGoalLineY, sizeof(initialGoalLineY));
-
-                        // スピードを初期化
-                        beamSpeed[0] = 40.0f;
-                        beamSpeed[1] = 40.0f;
-                        beamSpeed[2] = 40.0f;
-                        beamSpeed[3] = 40.0f;
-                        beamSpeed[4] = 40.0f;
-                        beamSpeed[5] = 40.0f;
-                        beamSpeed[6] = 40.0f;
-
-                        playerHP = 1000;
-                        bossHP = 20;
-                    }
-
                     if (playerHP <= 0) {
                         scene = GAME_OVER;
                     }
@@ -1072,20 +1023,11 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
         /// 描画処理ここから
         ///
 
-
         if (!Novice::IsPlayingAudio(bgm))
         {
             Novice::PlayAudio(bgm, 1, 0.5f);
           
         }
-
-
-
-
-
-
-
-
         switch (scene)
         {
         case TITLE:
