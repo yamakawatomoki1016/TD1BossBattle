@@ -3,7 +3,7 @@
 #include <cstdlib>
 #include <vector>
 
-const char kWindowTitle[] = "TD1BossBattle";
+const char kWindowTitle[] = "5244_怪奇！百獣の猫";
 const float M_PI = 3.14159265358979323846f;
 
 int isBGMPlaying = true;
@@ -16,7 +16,7 @@ enum Scene
 };
 
 struct Circle {
-    float x, y;   // 円の位置
+    float x, y;   // 円の位
     float vx, vy; // 円の速度
     bool active;  // 円が飛んでいるかどうか
     float radius;
